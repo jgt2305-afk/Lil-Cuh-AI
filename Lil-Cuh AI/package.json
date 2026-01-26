@@ -1,9 +1,0 @@
-{
-  "name": "lil-cuh-ai",
-  "version": "1.0.0",
-  "description": "Lil Cuh AI Assistant",
-  "scripts": {
-    "dev": "vercel dev",
-    "deploy": "vercel --prod"
-  }
-}
