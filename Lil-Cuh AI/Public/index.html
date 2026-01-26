@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lil Cuh AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#ff3b9d;--red:#ff1f3d;--bg:#0a000f;--panel:#120018;--soft:#1a0023;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;font-family:'Inter',sans-serif;overflow:hidden;}
+body{background:radial-gradient(circle at top,#24001a,var(--bg));display:flex;justify-content:center;align-items:center;color:white;}
+.app{width:95%;max-width:1000px;height:92vh;background:rgba(18,0,24,.92);border-radius:22px;box-shadow:0 0 45px rgba(255,59,157,.45);display:flex;flex-direction:column;padding:18px;}
+.header{text-align:center;padding-bottom:10px;border-bottom:1px solid rgba(255,59,157,.25);flex-shrink:0;}
+.header h1{margin:0 0 4px;font-size:26px;color:var(--pink);display:flex;align-items:center;justify-content:center;gap:8px;}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+.header p{margin:0;font-size:13px;opacity:.7;}
+.controls{display:flex;gap:8px;justify-content:center;margin-top:8px;flex-wrap:wrap;}
+.controls button{padding:6px 12px;border:1px solid rgba(255,59,157,.3);border-radius:8px;background:rgba(255,59,157,.1);color:var(--pink);font-size:11px;cursor:pointer;transition:all .2s;font-family:inherit;}
+.controls button:hover{background:rgba(255,59,157,.2);transform:translateY(-1px);}
+.memory-indicator{font-size:10px;opacity:.5;margin-top:4px;}
+.chat{flex:1;margin-top:12px;padding:14px;background:var(--panel);border-radius:16px;overflow-y:auto;min-height:0;}
+.chat::-webkit-scrollbar{width:8px;}
+.chat::-webkit-scrollbar-track{background:rgba(255,59,157,.1);border-radius:4px;}
+.chat::-webkit-scrollbar-thumb{background:rgba(255,59,157,.3);border-radius:4px;}
+.message{max-width:75%;margin-bottom:14px;padding:12px 14px;border-radius:14px;line-height:1.5;font-size:14px;animation:slideIn .3s ease;word-wrap:break-word;}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.user{margin-left:auto;background:linear-gradient(90deg,#1f1f1f,#121212);}
+.bot{background:rgba(255,59,157,.15);border:1px solid rgba(255,59,157,.4);white-space:pre-wrap;}
+.thinking{opacity:.6;font-style:italic;}
+.error{background:rgba(255,31,61,.2);border:1px solid var(--red);color:#ffaaaa;}
+.message-actions{display:flex;gap:6px;margin-top:8px;font-size:11px;}
+.message-actions button{padding:4px 8px;border:1px solid rgba(255,59,157,.2);border-radius:6px;background:rgba(0,0,0,.3);color:rgba(255,255,255,.6);cursor:pointer;transition:all .2s;}
+.message-actions button:hover{background:rgba(255,59,157,.2);color:white;}
+.suggestions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;padding:0 14px;flex-shrink:0;}
+.suggestion-chip{padding:6px 12px;border:1px solid rgba(255,59,157,.2);border-radius:12px;background:rgba(255,59,157,.05);color:rgba(255,255,255,.7);font-size:12px;cursor:pointer;transition:all .2s;}
+.suggestion-chip:hover{background:rgba(255,59,157,.15);border-color:rgba(255,59,157,.4);color:white;}
+.input-area{display:flex;gap:10px;margin-top:10px;align-items:flex-end;flex-shrink:0;}
+.input-wrapper{flex:1;position:relative;}
+.file-preview-area{display:flex;gap:8px;flex-wrap:wrap;padding:0 0 8px 0;}
+.file-preview-item{padding:8px 12px;background:rgba(255,59,157,.15);border:1px solid rgba(255,59,157,.3);border-radius:8px;font-size:12px;display:flex;align-items:center;gap:6px;}
+.file-preview-item button{background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:0;line-height:1;}
+.file-preview-item img{width:30px;height:30px;object-fit:cover;border-radius:4px;}
+textarea{width:100%;padding:14px 14px 34px 14px;border-radius:14px;border:none;outline:none;background:var(--soft);color:white;font-size:14px;resize:none;font-family:inherit;min-height:50px;max-height:120px;}
+textarea::placeholder{color:rgba(255,255,255,.5);}
+textarea:disabled{opacity:.5;cursor:not-allowed;}
+.input-tools{position:absolute;bottom:8px;left:8px;display:flex;gap:6px;}
+.input-tools button{padding:4px 8px;border:1px solid rgba(255,59,157,.2);border-radius:6px;background:rgba(0,0,0,.3);color:rgba(255,255,255,.6);cursor:pointer;font-size:11px;transition:all .2s;}
+.input-tools button:hover{background:rgba(255,59,157,.2);color:white;}
+.send-btn{padding:14px 22px;border:none;border-radius:14px;cursor:pointer;font-weight:600;background:linear-gradient(90deg,var(--pink),var(--red));color:black;transition:transform .2s;font-size:14px;}
+.send-btn:hover:not(:disabled){transform:scale(1.05);}
+.send-btn:disabled{opacity:.5;cursor:not-allowed;}
+.code-panel{margin-top:10px;height:180px;background:#060008;border-radius:16px;padding:40px 14px 14px;overflow:auto;font-size:12px;font-family:monospace;white-space:pre-wrap;box-shadow:inset 0 0 18px rgba(255,31,61,.35);display:none;position:relative;}
+.code-panel.visible{display:block;}
+.copy-btn{position:absolute;top:10px;right:10px;padding:6px 12px;border:1px solid rgba(255,59,157,.3);border-radius:6px;background:rgba(0,0,0,.5);color:var(--pink);cursor:pointer;font-size:11px;}
+.copy-btn:hover{background:rgba(255,59,157,.2);}
+iframe{width:100%;height:260px;margin-top:10px;border-radius:16px;border:1px solid rgba(255,59,157,.4);background:white;display:none;}
+iframe.visible{display:block;}
+.footer{text-align:center;font-size:11px;opacity:.6;margin-top:6px;flex-shrink:0;}
+#fileInput{display:none;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1><span class="status-dot"></span> Lil Cuh AI</h1>
+    <p>Ultra-intelligent: Coding + Health + Master Chef + Vision AI</p>
+    <div class="controls">
+      <button id="clearMemBtn">Clear Memory</button>
+      <button id="showMemBtn">Show Memory</button>
+      <button id="exportBtn">Export Code</button>
+      <button id="newProjBtn">New Project</button>
+    </div>
+    <div class="memory-indicator" id="memoryIndicator">Memory: 0 projects tracked</div>
+  </div>
+  <div id="chat" class="chat"></div>
+  <div id="suggestions" class="suggestions"></div>
+  <div class="input-area">
+    <div class="input-wrapper">
+      <div id="filePreviewArea" class="file-preview-area"></div>
+      <textarea id="input" placeholder="Tell me what you want to build, ask health questions, or attach files..."></textarea>
+      <div class="input-tools">
+        <button id="attachBtn">Attach</button>
+        <button id="imageGenBtn">Gen Image</button>
+        <button id="debugBtn">Debug</button>
+      </div>
+    </div>
+    <button id="sendBtn" class="send-btn">Send</button>
+  </div>
+  <input type="file" id="fileInput" multiple accept="image/*,.pdf,.html,.css,.js,.json,.txt,.md">
+  <div id="codePanel" class="code-panel">
+    <button class="copy-btn" id="copyBtn">Copy</button>
+    <div id="codeContent"></div>
+  </div>
+  <iframe id="preview" sandbox="allow-scripts allow-same-origin"></iframe>
+  <div class="footer">Powered by Claude AI</div>
+</div>
+
+<script>
+const API_ENDPOINT = '/api/chat';
+let attachedFiles = [];
+let projectMemory = [];
+let conversationHistory = [];
+let currentProject = null;
+let isProcessing = false;
+
+const els = {
+  chat: document.getElementById('chat'),
+  input: document.getElementById('input'),
+  sendBtn: document.getElementById('sendBtn'),
+  suggestions: document.getElementById('suggestions'),
+  memoryIndicator: document.getElementById('memoryIndicator'),
+  filePreviewArea: document.getElementById('filePreviewArea'),
+  fileInput: document.getElementById('fileInput'),
+  codePanel: document.getElementById('codePanel'),
+  codeContent: document.getElementById('codeContent'),
+  preview: document.getElementById('preview'),
+};
+
+function addMessage(text, type, actions) {
+  const div = document.createElement('div');
+  div.className = 'message ' + type;
+  div.textContent = text;
+  
+  if (actions?.length) {
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'message-actions';
+    actions.forEach(a => {
+      const btn = document.createElement('button');
+      btn.textContent = a.label;
+      btn.onclick = a.handler;
+      actionsDiv.appendChild(btn);
+    });
+    div.appendChild(actionsDiv);
+  }
+  
+  els.chat.appendChild(div);
+  els.chat.scrollTop = els.chat.scrollHeight;
+  return div;
+}
+
+function showThinking() {
+  return addMessage('Thinking...', 'bot thinking');
+}
+
+function removeMessage(el) {
+  if (el?.parentNode) el.parentNode.removeChild(el);
+}
+
+function showSuggestions(sug) {
+  els.suggestions.innerHTML = '';
+  sug.forEach(s => {
+    const chip = document.createElement('div');
+    chip.className = 'suggestion-chip';
+    chip.textContent = s;
+    chip.onclick = () => {
+      els.input.value = s;
+      send();
+    };
+    els.suggestions.appendChild(chip);
+  });
+}
+
+function updateMemory() {
+  els.memoryIndicator.textContent = `Memory: ${projectMemory.length} projects tracked`;
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleFiles(files) {
+  for (let file of files) {
+    try {
+      const fileData = { name: file.name, type: file.type, size: file.size };
+      if (file.type.startsWith('image/')) {
+        fileData.base64 = await fileToBase64(file);
+        fileData.preview = URL.createObjectURL(file);
+      } else {
+        fileData.text = await file.text();
+      }
+      attachedFiles.push(fileData);
+      displayFilePreview(fileData);
+    } catch (e) {
+      addMessage(`Error loading ${file.name}`, 'error');
+    }
+  }
+}
+
+function displayFilePreview(fileData) {
+  const item = document.createElement('div');
+  item.className = 'file-preview-item';
+  
+  if (fileData.preview) {
+    const img = document.createElement('img');
+    img.src = fileData.preview;
+    item.appendChild(img);
+  }
+  
+  const name = document.createElement('span');
+  name.textContent = fileData.preview ? fileData.name : '📄 ' + fileData.name;
+  item.appendChild(name);
+  
+  const btn = document.createElement('button');
+  btn.textContent = '×';
+  btn.onclick = () => {
+    attachedFiles = attachedFiles.filter(f => f.name !== fileData.name);
+    els.filePreviewArea.innerHTML = '';
+    attachedFiles.forEach(displayFilePreview);
+  };
+  item.appendChild(btn);
+  
+  els.filePreviewArea.appendChild(item);
+}
+
+function saveProject(name, code, desc) {
+  const project = { id: Date.now(), name, code, description: desc, created: new Date().toISOString() };
+  currentProject = project;
+  const idx = projectMemory.findIndex(p => p.name === name);
+  if (idx >= 0) {
+    projectMemory[idx] = project;
+  } else {
+    projectMemory.push(project);
+    if (projectMemory.length > 10) projectMemory.shift();
+  }
+  updateMemory();
+}
+
+function extractProjectName(msg) {
+  const match = msg.match(/(?:make|build|create|design)\s+(?:a|an|me)?\s*(.+?)(?:\s+for|\s+with|\s+that|$)/i);
+  return match?.[1]?.trim().substring(0, 30) || null;
+}
+
+function buildContext() {
+  let ctx = '';
+  if (currentProject) ctx += `\n\nCURRENT PROJECT: ${currentProject.name}\n${currentProject.description}`;
+  if (projectMemory.length) ctx += `\n\nPREVIOUS PROJECTS: ${projectMemory.map(p => p.name).join(', ')}`;
+  return ctx;
+}
+
+function runPreview(code) {
+  els.preview.srcdoc = code;
+  els.preview.classList.add('visible');
+  els.codeContent.textContent = code;
+  els.codePanel.classList.add('visible');
+}
+
+async function askClaude(userMsg) {
+  if (isProcessing) return;
+  isProcessing = true;
+  
+  const thinking = showThinking();
+  
+  try {
+    const content = [];
+    
+    for (let file of attachedFiles) {
+      if (file.base64) {
+        content.push({ type: 'image', source: { type: 'base64', media_type: file.type, data: file.base64 }});
+      } else if (file.text) {
+        userMsg += `\n\nFile "${file.name}":\n${file.text}`;
+      }
+    }
+    
+    content.push({ type: 'text', text: userMsg });
+    conversationHistory.push({ role: 'user', content });
+
+    const sys = `You are Lil Cuh, ultra-intelligent AI expert in coding, health, fitness, medical diagnosis, culinary arts (1000+ recipes). Casual but expert-level.
+
+CRITICAL: For code/build requests, respond ONLY with complete HTML. No explanations.
+
+For recipes: full recipe with ingredients, steps, times, tips.
+For health: ask questions, advice with disclaimers.
+For debugging: analyze thoroughly.${buildContext()}`;
+
+    const res = await fetch(API_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system: sys,
+        messages: conversationHistory,
+        max_tokens: 4096
+      })
+    });
+
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || `API error ${res.status}`);
+    }
+
+    const data = await res.json();
+    removeMessage(thinking);
+
+    if (data.content?.[0]) {
+      const reply = data.content[0].text;
+      conversationHistory.push({ role: 'assistant', content: reply });
+
+      const isCode = reply.trim().startsWith('<!DOCTYPE') || 
+                     reply.trim().startsWith('<html') || 
+                     reply.includes('```html') ||
+                     (reply.includes('<style') && reply.includes('</style>'));
+
+      if (isCode) {
+        let code = reply.replace(/```html\n?/gi, '').replace(/```\n?/g, '');
+        const match = code.match(/(<!DOCTYPE[\s\S]*<\/html>)/i) || code.match(/(<html[\s\S]*<\/html>)/i);
+        if (match) code = match[1];
+        code = code.trim();
+        
+        const name = extractProjectName(userMsg) || `Project_${Date.now()}`;
+        saveProject(name, code, userMsg);
+        
+        addMessage('Here you go!', 'bot', [
+          { label: 'Modify', handler: () => { els.input.value = 'modify this: '; els.input.focus(); }},
+          { label: 'Debug', handler: debugCode },
+          { label: 'Save', handler: exportCode }
+        ]);
+        runPreview(code);
+      } else {
+        addMessage(reply, 'bot');
+      }
+      
+      attachedFiles = [];
+      els.filePreviewArea.innerHTML = '';
+    }
+
+  } catch (err) {
+    removeMessage(thinking);
+    console.error('Error:', err);
+    addMessage(`Error: ${err.message}`, 'error');
+  } finally {
+    isProcessing = false;
+  }
+}
+
+async function generateImage() {
+  const prompt = els.input.value.trim() || 'cool neon cyberpunk design';
+  els.input.value = '';
+  addMessage(`Generating: "${prompt}"...`, 'bot');
+  
+  const thinking = showThinking();
+  
+  try {
+    const res = await fetch(API_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: `Create SVG image of: ${prompt}. ONLY SVG code, no explanations.` }],
+        max_tokens: 1024
+      })
+    });
+    
+    const data = await res.json();
+    removeMessage(thinking);
+    
+    if (data.content?.[0]) {
+      let svg = data.content[0].text.replace(/```svg\n?/g, '').replace(/```\n?/g, '').trim();
+      const blob = new Blob([svg], {type: 'image/svg+xml'});
+      const url = URL.createObjectURL(blob);
+      const div = addMessage('Your image!', 'bot');
+      const img = document.createElement('img');
+      img.src = url;
+      img.style.cssText = 'max-width:100%;border-radius:8px;margin-top:8px';
+      div.appendChild(img);
+    }
+  } catch (e) {
+    removeMessage(thinking);
+    addMessage('Image gen failed', 'error');
+  }
+}
+
+async function debugCode() {
+  if (!currentProject?.code) {
+    addMessage('No code to debug!', 'error');
+    return;
+  }
+  
+  addMessage('Analyzing...', 'bot');
+  const thinking = showThinking();
+  
+  try {
+    const res = await fetch(API_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: `Analyze for bugs, performance, security:\n\n${currentProject.code}` }],
+        max_tokens: 2048
+      })
+    });
+    
+    const data = await res.json();
+    removeMessage(thinking);
+    
+    if (data.content?.[0]) {
+      addMessage('Debug Report:\n\n' + data.content[0].text, 'bot');
+    }
+  } catch (e) {
+    removeMessage(thinking);
+    addMessage('Debug failed', 'error');
+  }
+}
+
+function copyCode() {
+  navigator.clipboard.writeText(els.codeContent.textContent).then(() => {
+    const orig = document.getElementById('copyBtn').textContent;
+    document.getElementById('copyBtn').textContent = 'Copied!';
+    setTimeout(() => document.getElementById('copyBtn').textContent = orig, 2000);
+  });
+}
+
+function exportCode() {
+  if (!currentProject) {
+    addMessage('No code to export!', 'error');
+    return;
+  }
+  const blob = new Blob([currentProject.code], {type: 'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${currentProject.name.replace(/\s+/g, '_')}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+  addMessage('Exported!', 'bot');
+}
+
+function clearMemory() {
+  if (confirm('Clear all memory?')) {
+    projectMemory = [];
+    currentProject = null;
+    conversationHistory = [];
+    updateMemory();
+    addMessage('Memory cleared!', 'bot');
+  }
+}
+
+function showMemory() {
+  if (!projectMemory.length) {
+    addMessage('No projects yet!', 'bot');
+    return;
+  }
+  const msg = 'Your projects:\n\n' + projectMemory.map((p, i) => `${i+1}. ${p.name}`).join('\n');
+  const actions = projectMemory.slice(-3).map(p => ({
+    label: p.name.substring(0, 18),
+    handler: () => {
+      runPreview(p.code);
+      currentProject = p;
+      addMessage(`Loaded "${p.name}"`, 'bot');
+    }
+  }));
+  addMessage(msg, 'bot', actions);
+}
+
+function newProject() {
+  currentProject = null;
+  conversationHistory = [];
+  els.preview.classList.remove('visible');
+  els.codePanel.classList.remove('visible');
+  els.suggestions.innerHTML = '';
+  addMessage('New project!', 'bot');
+}
+
+async function send() {
+  const text = els.input.value.trim();
+  if (!text && !attachedFiles.length) return;
+  if (isProcessing) return;
+
+  els.input.disabled = true;
+  els.sendBtn.disabled = true;
+
+  if (text) addMessage(text, 'user');
+  if (attachedFiles.length) {
+    attachedFiles.forEach(f => addMessage(`Attached: ${f.name}`, 'user'));
+  }
+  
+  els.input.value = '';
+  els.suggestions.innerHTML = '';
+
+  await askClaude(text || 'Analyze files');
+
+  els.input.disabled = false;
+  els.sendBtn.disabled = false;
+  els.input.focus();
+}
+
+// Event listeners
+els.sendBtn.onclick = send;
+els.input.onkeydown = e => {
+  if (e.key === 'Enter' && !e.shiftKey && !els.input.disabled) {
+    e.preventDefault();
+    send();
+  }
+};
+els.input.oninput = () => {
+  els.input.style.height = 'auto';
+  els.input.style.height = Math.min(els.input.scrollHeight, 120) + 'px';
+};
+els.attachBtn.onclick = () => els.fileInput.click();
+els.fileInput.onchange = e => {
+  if (e.target.files.length) {
+    handleFiles(e.target.files);
+    e.target.value = '';
+  }
+};
+els.imageGenBtn.onclick = generateImage;
+els.debugBtn.onclick = debugCode;
+document.getElementById('copyBtn').onclick = copyCode;
+document.getElementById('clearMemBtn').onclick = clearMemory;
+document.getElementById('showMemBtn').onclick = showMemory;
+document.getElementById('exportBtn').onclick = exportCode;
+document.getElementById('newProjBtn').onclick = newProject;
+
+// Init
+addMessage('Ay! I\'m Lil Cuh - ultra-intelligent AI. I can code, give health advice, share 1000+ recipes, and more. What\'s good?', 'bot');
+showSuggestions(['Build me a game', 'Recipe for tacos', 'Create workout plan', 'Debug code']);
+</script>
+</body>
+</html>
