@@ -1,0 +1,42 @@
+{
+  "name": "lilcuh",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
+```
+
+---
+
+#### **File 3: Create a folder called `public`**
+
+Inside the `public` folder, create `index.html`:
+
+**Copy the entire HTML** from my **"Lil Cuh - Simplified for Vercel"** artifact above.
+
+---
+
+#### **File 4: `.gitignore`** (optional but recommended)
+```
+node_modules/
+.env
+```
+
+---
+
+### **Your Folder Structure:**
+```
+lilcuh/
+├── index.js
+├── package.json
+├── .gitignore
+└── public/
+    └── index.html
