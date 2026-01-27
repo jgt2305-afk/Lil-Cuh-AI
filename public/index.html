@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lil Cuh AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#ff3b9d;--red:#ff1f3d;--bg:#0a000f;--panel:#120018;--soft:#1a0023;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;font-family:'Inter',sans-serif;overflow:hidden;}
+body{background:radial-gradient(circle at top,#24001a,var(--bg));display:flex;justify-content:center;align-items:center;color:white;}
+.app{width:95%;max-width:1000px;height:92vh;background:rgba(18,0,24,.92);border-radius:22px;box-shadow:0 0 45px rgba(255,59,157,.45);display:flex;flex-direction:column;padding:18px;}
+.header{text-align:center;padding-bottom:10px;border-bottom:1px solid rgba(255,59,157,.25);flex-shrink:0;}
+.header h1{margin:0 0 4px;font-size:26px;color:var(--pink);display:flex;align-items:center;justify-content:center;gap:8px;}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
+.header p{margin:0;font-size:13px;opacity:.7;}
+.controls{display:flex;gap:8px;justify-content:center;margin-top:8px;flex-wrap:wrap;}
+.controls button{padding:6px 12px;border:1px solid rgba(255,59,157,.3);border-radius:8px;background:rgba(255,59,157,.1);color:var(--pink);font-size:11px;cursor:pointer;transition:all .2s;font-family:inherit;}
+.controls button:hover{background:rgba(255,59,157,.2);transform:translateY(-1px);}
+.memory-indicator{font-size:10px;opacity:.5;margin-top:4px;}
+.chat{flex:1;margin-top:12px;padding:14px;background:var(--panel);border-radius:16px;overflow-y:auto;min-height:0;}
+.chat::-webkit-scrollbar{width:8px;}
+.chat::-webkit-scrollbar-track{background:rgba(255,59,157,.1);border-radius:4px;}
+.chat::-webkit-scrollbar-thumb{background:rgba(255,59,157,.3);border-radius:4px;}
+.message{max-width:75%;margin-bottom:14px;padding:12px 14px;border-radius:14px;line-height:1.5;font-size:14px;animation:slideIn .3s ease;word-wrap:break-word;}
+@keyframes slideIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.user{margin-left:auto;background:linear-gradient(90deg,#1f1f1f,#121212);}
+.bot{background:rgba(255,59,157,.15);border:1px solid rgba(255,59,157,.4);white-space:pre-wrap;}
+.thinking{opacity:.6;font-style:italic;}
+.error{background:rgba(255,31,61,.2);border:1px solid var(--red);color:#ffaaaa;}
+.message img,.message video,.message audio{max-width:100%;border-radius:8px;margin-top:8px;display:block;}
+.message video{max-height:300px;}
+.message audio{width:100%;}
+.message-actions{display:flex;gap:6px;margin-top:8px;font-size:11px;}
+.message-actions button{padding:4px 8px;border:1px solid rgba(255,59,157,.2);border-radius:6px;background:rgba(0,0,0,.3);color:rgba(255,255,255,.6);cursor:pointer;transition:all .2s;}
+.message-actions button:hover{background:rgba(255,59,157,.2);color:white;}
+.file-preview-area{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
+.file-item{padding:6px 12px;background:rgba(255,59,157,.15);border:1px solid rgba(255,59,157,.3);border-radius:8px;font-size:12px;display:flex;align-items:center;gap:6px;}
+.file-item img{width:30px;height:30px;object-fit:cover;border-radius:4px;}
+.file-item button{background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:0;line-height:1;}
+.suggestions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;padding:0 14px;flex-shrink:0;}
+.suggestion-chip{padding:6px 12px;border:1px solid rgba(255,59,157,.2);border-radius:12px;background:rgba(255,59,157,.05);color:rgba(255,255,255,.7);font-size:12px;cursor:pointer;transition:all .2s;}
+.suggestion-chip:hover{background:rgba(255,59,157,.15);border-color:rgba(255,59,157,.4);color:white;}
+.input-area{display:flex;gap:10px;margin-top:10px;flex-shrink:0;align-items:flex-end;}
+.input-wrapper{flex:1;position:relative;}
+textarea{width:100%;padding:14px 14px 40px 14px;border-radius:14px;border:none;background:var(--soft);color:white;font-size:14px;resize:none;font-family:inherit;min-height:50px;max-height:120px;}
+textarea::placeholder{color:rgba(255,255,255,.5);}
+.input-tools{position:absolute;bottom:8px;left:8px;display:flex;gap:6px;}
+.input-tools button{padding:4px 10px;border:1px solid rgba(255,59,157,.3);border-radius:6px;background:rgba(0,0,0,.5);color:var(--pink);cursor:pointer;font-size:11px;transition:all .2s;}
+.input-tools button:hover{background:rgba(255,59,157,.2);}
+.send-btn{padding:14px 22px;border:none;border-radius:14px;cursor:pointer;font-weight:600;background:linear-gradient(90deg,var(--pink),var(--red));color:black;font-size:14px;}
+.send-btn:disabled{opacity:.5;}
+.code-panel{margin-top:10px;height:180px;background:#060008;border-radius:16px;padding:14px;overflow:auto;font-size:12px;font-family:monospace;white-space:pre-wrap;display:none;position:relative;}
+.code-panel.visible{display:block;}
+.code-panel-header{position:absolute;top:10px;right:10px;display:flex;gap:6px;z-index:10;}
+.code-panel-btn{padding:4px 10px;border:1px solid rgba(255,59,157,.3);border-radius:6px;background:rgba(0,0,0,.5);color:var(--pink);cursor:pointer;font-size:11px;transition:all .2s;}
+.code-panel-btn:hover{background:rgba(255,59,157,.2);}
+.preview-container{margin-top:10px;position:relative;display:none;}
+.preview-container.visible{display:block;}
+.preview-header{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(255,59,157,.15);border:1px solid rgba(255,59,157,.4);border-radius:16px 16px 0 0;}
+.preview-title{color:var(--pink);font-size:12px;font-weight:600;}
+.preview-actions{display:flex;gap:6px;}
+.preview-btn{padding:4px 10px;border:1px solid rgba(255,59,157,.3);border-radius:6px;background:rgba(0,0,0,.3);color:var(--pink);cursor:pointer;font-size:11px;transition:all .2s;}
+.preview-btn:hover{background:rgba(255,59,157,.2);}
+iframe{width:100%;height:260px;background:white;border:1px solid rgba(255,59,157,.4);border-top:none;border-radius:0 0 16px 16px;display:block;}
+#fileInput{display:none;}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1><span class="status-dot"></span> Lil Cuh AI</h1>
+    <p>Ultra-intelligent: Coding + Health + Master Chef + Vision AI + Media Creator</p>
+    <div class="controls">
+      <button id="clearMemBtn">Clear Memory</button>
+      <button id="showMemBtn">Show Memory</button>
+      <button id="exportBtn">Export Code</button>
+      <button id="newProjBtn">New Project</button>
+      <button id="refreshBtn">Refresh Page</button>
+    </div>
+    <div class="memory-indicator" id="memoryIndicator">Memory: 0 projects tracked</div>
+  </div>
+  <div id="chat" class="chat"></div>
+  <div id="suggestions" class="suggestions"></div>
+  <div class="input-area">
+    <div class="input-wrapper">
+      <div id="filePreviewArea" class="file-preview-area"></div>
+      <textarea id="input" placeholder="Ask me to create images, videos, sounds, code, solve math, or upload files to analyze..."></textarea>
+      <div class="input-tools">
+        <button id="attachBtn">📎 Attach File</button>
+        <button id="genImageBtn">🎨 Image</button>
+        <button id="genVideoBtn">🎬 Video</button>
+        <button id="genSoundBtn">🎵 Sound</button>
+      </div>
+    </div>
+    <button id="sendBtn" class="send-btn">Send</button>
+  </div>
+  <input type="file" id="fileInput" multiple accept="image/*,video/*,audio/*,.pdf,.txt,.html,.css,.js,.json,.md,.doc,.docx">
+  <div id="codePanel" class="code-panel">
+    <div class="code-panel-header">
+      <button class="code-panel-btn" id="copyCodeBtn">Copy</button>
+      <button class="code-panel-btn" id="closeCodeBtn">Close</button>
+    </div>
+    <div id="codeContent" style="margin-top:30px;"></div>
+  </div>
+  <div id="previewContainer" class="preview-container">
+    <div class="preview-header">
+      <div class="preview-title">Preview</div>
+      <div class="preview-actions">
+        <button class="preview-btn" id="refreshPreviewBtn">Refresh</button>
+        <button class="preview-btn" id="closePreviewBtn">Close</button>
+      </div>
+    </div>
+    <iframe id="preview" sandbox="allow-scripts allow-same-origin"></iframe>
+  </div>
+</div>
+
+<script>
+let conversationHistory = [];
+let projectMemory = [];
+let currentProject = null;
+let isProcessing = false;
+let attachedFiles = [];
+
+const chat = document.getElementById('chat');
+const input = document.getElementById('input');
+const sendBtn = document.getElementById('sendBtn');
+const suggestions = document.getElementById('suggestions');
+const memoryIndicator = document.getElementById('memoryIndicator');
+const codePanel = document.getElementById('codePanel');
+const codeContent = document.getElementById('codeContent');
+const previewContainer = document.getElementById('previewContainer');
+const preview = document.getElementById('preview');
+const fileInput = document.getElementById('fileInput');
+const filePreviewArea = document.getElementById('filePreviewArea');
+
+function addMessage(text, type, actions, mediaUrl, mediaType) {
+  const div = document.createElement('div');
+  div.className = 'message ' + type;
+  
+  if (mediaUrl && mediaType) {
+    if (mediaType === 'image') {
+      const img = document.createElement('img');
+      img.src = mediaUrl;
+      img.alt = 'Generated media';
+      div.appendChild(img);
+    } else if (mediaType === 'video') {
+      const video = document.createElement('video');
+      video.src = mediaUrl;
+      video.controls = true;
+      div.appendChild(video);
+    } else if (mediaType === 'audio') {
+      const audio = document.createElement('audio');
+      audio.src = mediaUrl;
+      audio.controls = true;
+      div.appendChild(audio);
+    }
+    if (text) {
+      const textDiv = document.createElement('div');
+      textDiv.textContent = text;
+      div.appendChild(textDiv);
+    }
+  } else {
+    div.textContent = text;
+  }
+  
+  if (actions && actions.length) {
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'message-actions';
+    actions.forEach(a => {
+      const btn = document.createElement('button');
+      btn.textContent = a.label;
+      btn.onclick = a.handler;
+      actionsDiv.appendChild(btn);
+    });
+    div.appendChild(actionsDiv);
+  }
+  
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  return div;
+}
+
+function showThinking() {
+  return addMessage('Thinking...', 'bot thinking');
+}
+
+function removeMessage(el) {
+  if (el && el.parentNode) el.parentNode.removeChild(el);
+}
+
+function showSuggestions(sug) {
+  suggestions.innerHTML = '';
+  sug.forEach(s => {
+    const chip = document.createElement('div');
+    chip.className = 'suggestion-chip';
+    chip.textContent = s;
+    chip.onclick = () => {
+      input.value = s;
+      send();
+    };
+    suggestions.appendChild(chip);
+  });
+}
+
+function updateMemory() {
+  memoryIndicator.textContent = `Memory: ${projectMemory.length} projects tracked`;
+}
+
+function saveProject(name, code, desc) {
+  const project = { id: Date.now(), name, code, description: desc, created: new Date().toISOString() };
+  currentProject = project;
+  const idx = projectMemory.findIndex(p => p.name === name);
+  if (idx >= 0) {
+    projectMemory[idx] = project;
+  } else {
+    projectMemory.push(project);
+    if (projectMemory.length > 10) projectMemory.shift();
+  }
+  updateMemory();
+}
+
+function extractProjectName(msg) {
+  const match = msg.match(/(?:make|build|create|design|generate)\s+(?:a|an|me)?\s*(.+?)(?:\s+for|\s+with|\s+that|$)/i);
+  return match && match[1] ? match[1].trim().substring(0, 30) : null;
+}
+
+function buildContext() {
+  let ctx = '';
+  if (currentProject) ctx += `\n\nCURRENT PROJECT: ${currentProject.name}\n${currentProject.description}`;
+  if (projectMemory.length) ctx += `\n\nPREVIOUS PROJECTS: ${projectMemory.map(p => p.name).join(', ')}`;
+  return ctx;
+}
+
+function runPreview(code) {
+  preview.srcdoc = code;
+  previewContainer.classList.add('visible');
+  codeContent.textContent = code;
+  codePanel.classList.add('visible');
+}
+
+function closePreview() {
+  previewContainer.classList.remove('visible');
+  preview.srcdoc = '';
+}
+
+function closeCode() {
+  codePanel.classList.remove('visible');
+}
+
+function refreshPreview() {
+  if (currentProject && currentProject.code) {
+    preview.srcdoc = '';
+    setTimeout(() => {
+      preview.srcdoc = currentProject.code;
+    }, 100);
+  }
+}
+
+// File handling
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleFiles(files) {
+  for (let file of files) {
+    try {
+      const fileData = { name: file.name, type: file.type, size: file.size };
+      
+      if (file.type.startsWith('image/') || file.type.startsWith('video/') || file.type.startsWith('audio/')) {
+        fileData.base64 = await fileToBase64(file);
+        fileData.preview = URL.createObjectURL(file);
+      } else {
+        fileData.text = await file.text();
+      }
+      
+      attachedFiles.push(fileData);
+      displayFilePreview(fileData);
+    } catch (e) {
+      addMessage(`Error loading ${file.name}`, 'error');
+    }
+  }
+}
+
+function displayFilePreview(fileData) {
+  const item = document.createElement('div');
+  item.className = 'file-item';
+  
+  if (fileData.preview && fileData.type.startsWith('image/')) {
+    const img = document.createElement('img');
+    img.src = fileData.preview;
+    item.appendChild(img);
+  }
+  
+  const name = document.createElement('span');
+  name.textContent = fileData.name;
+  item.appendChild(name);
+  
+  const btn = document.createElement('button');
+  btn.textContent = '×';
+  btn.onclick = () => {
+    attachedFiles = attachedFiles.filter(f => f.name !== fileData.name);
+    filePreviewArea.innerHTML = '';
+    attachedFiles.forEach(displayFilePreview);
+  };
+  item.appendChild(btn);
+  
+  filePreviewArea.appendChild(item);
+}
+
+async function generateMedia(type) {
+  const prompt = input.value.trim() || `a cool ${type}`;
+  input.value = '';
+  
+  addMessage(`Generating ${type}: "${prompt}"...`, 'bot');
+  const thinking = showThinking();
+  
+  try {
+    let systemPrompt = '';
+    
+    if (type === 'image') {
+      systemPrompt = `Create an SVG image of: ${prompt}. Respond with ONLY the SVG code, no explanations.`;
+    } else if (type === 'video') {
+      systemPrompt = `Create an HTML5 video animation of: ${prompt}. Use Canvas API or CSS animations. Respond with ONLY complete HTML code including autoplay video/animation. Make it visually impressive.`;
+    } else if (type === 'sound') {
+      systemPrompt = `Create an HTML audio synthesizer that generates sound for: ${prompt}. Use Web Audio API. Respond with ONLY complete HTML code with auto-play button. Include waveform visualization if possible.`;
+    }
+    
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: systemPrompt }],
+        max_tokens: 3000
+      })
+    });
+    
+    const data = await response.json();
+    removeMessage(thinking);
+    
+    if (data.content && data.content[0]) {
+      const reply = data.content[0].text;
+      
+      if (type === 'image') {
+        let svg = reply.replace(/```svg\n?/g, '').replace(/```\n?/g, '').trim();
+        const blob = new Blob([svg], {type: 'image/svg+xml'});
+        const url = URL.createObjectURL(blob);
+        addMessage(`Here's your ${type}!`, 'bot', [
+          {label: 'Download', handler: () => {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${prompt.substring(0,20)}.svg`;
+            a.click();
+          }}
+        ], url, 'image');
+      } else {
+        // For video and audio, create interactive HTML
+        let code = reply.replace(/```html\n?/gi, '').replace(/```\n?/g, '');
+        const match = code.match(/(<!DOCTYPE[\s\S]*<\/html>)/i) || code.match(/(<html[\s\S]*<\/html>)/i);
+        if (match) code = match[1];
+        
+        const blob = new Blob([code.trim()], {type: 'text/html'});
+        const url = URL.createObjectURL(blob);
+        
+        addMessage(`Here's your ${type}! Click to open:`, 'bot', [
+          {label: 'Open in New Tab', handler: () => window.open(url, '_blank')},
+          {label: 'Preview Below', handler: () => runPreview(code.trim())}
+        ]);
+      }
+    }
+  } catch (e) {
+    removeMessage(thinking);
+    addMessage(`${type} generation failed. Try again?`, 'error');
+  }
+}
+
+async function send() {
+  const text = input.value.trim();
+  if (!text && attachedFiles.length === 0) return;
+  if (isProcessing) return;
+
+  isProcessing = true;
+  input.disabled = true;
+  sendBtn.disabled = true;
+  
+  if (text) addMessage(text, 'user');
+  if (attachedFiles.length > 0) {
+    attachedFiles.forEach(f => addMessage(`📎 ${f.name}`, 'user'));
+  }
+  
+  input.value = '';
+  
+  const thinking = showThinking();
+
+  try {
+    let userMessage = text || 'Analyze the attached files';
+    const messageContent = [];
+    
+    // Add file attachments
+    for (let file of attachedFiles) {
+      if (file.base64 && file.type.startsWith('image/')) {
+        messageContent.push({
+          type: 'image',
+          source: { type: 'base64', media_type: file.type, data: file.base64 }
+        });
+      } else if (file.text) {
+        userMessage += `\n\nFile "${file.name}":\n${file.text}`;
+      }
+    }
+    
+    messageContent.push({ type: 'text', text: userMessage });
+    conversationHistory.push({ role: 'user', content: messageContent });
+
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system: `You are Lil Cuh, ultra-intelligent AI expert in coding, health, fitness, medical diagnosis, culinary arts (1000+ recipes), MATHEMATICS, and MEDIA CREATION (images, videos, sounds). You're a creative genius who can build anything. Casual but expert-level.
+
+CRITICAL: For code/build requests, respond ONLY with complete HTML. No explanations.
+
+For math: Solve equations step-by-step, explain concepts clearly, provide formulas.
+For calculators: Build working HTML calculators with proper math operations.
+For recipes: full recipe with ingredients, steps, times, tips.
+For health: ask questions, advice with disclaimers.
+For images: Create SVG graphics when requested.
+For videos: Build HTML5 canvas animations or CSS animations.
+For sounds: Use Web Audio API to generate tones, music, or sound effects.
+For file analysis: Analyze uploaded images, documents, or code and provide detailed insights.${buildContext()}`,
+        messages: conversationHistory,
+        max_tokens: 4096
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error ${response.status}`);
+    }
+
+    const data = await response.json();
+    removeMessage(thinking);
+
+    if (data.content && data.content[0]) {
+      const reply = data.content[0].text;
+      conversationHistory.push({ role: 'assistant', content: reply });
+
+      const isCode = reply.trim().startsWith('<!DOCTYPE') || 
+                     reply.trim().startsWith('<html') || 
+                     reply.includes('```html');
+
+      if (isCode) {
+        let code = reply.replace(/```html\n?/gi, '').replace(/```\n?/g, '');
+        const match = code.match(/(<!DOCTYPE[\s\S]*<\/html>)/i) || code.match(/(<html[\s\S]*<\/html>)/i);
+        if (match) code = match[1];
+        
+        const name = extractProjectName(userMessage) || `Project_${Date.now()}`;
+        saveProject(name, code.trim(), userMessage);
+        
+        addMessage('Here you go!', 'bot', [
+          { label: 'Modify', handler: () => { input.value = 'modify this: '; input.focus(); }},
+          { label: 'Save', handler: exportCode }
+        ]);
+        runPreview(code.trim());
+      } else {
+        addMessage(reply, 'bot');
+      }
+    }
+    
+    // Clear attached files
+    attachedFiles = [];
+    filePreviewArea.innerHTML = '';
+
+  } catch (err) {
+    removeMessage(thinking);
+    console.error('Error:', err);
+    addMessage(`Error: ${err.message}`, 'error');
+  } finally {
+    isProcessing = false;
+    input.disabled = false;
+    sendBtn.disabled = false;
+    input.focus();
+  }
+}
+
+function exportCode() {
+  if (!currentProject) {
+    addMessage('No code to export!', 'error');
+    return;
+  }
+  const blob = new Blob([currentProject.code], {type: 'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${currentProject.name.replace(/\s+/g, '_')}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+  addMessage('Exported!', 'bot');
+}
+
+function clearMemory() {
+  if (confirm('Clear all memory?')) {
+    projectMemory = [];
+    currentProject = null;
+    conversationHistory = [];
+    updateMemory();
+    addMessage('Memory cleared!', 'bot');
+  }
+}
+
+function showMemory() {
+  if (!projectMemory.length) {
+    addMessage('No projects yet!', 'bot');
+    return;
+  }
+  const msg = 'Your projects:\n\n' + projectMemory.map((p, i) => `${i+1}. ${p.name}`).join('\n');
+  const actions = projectMemory.slice(-3).map(p => ({
+    label: p.name.substring(0, 18),
+    handler: () => {
+      runPreview(p.code);
+      currentProject = p;
+      addMessage(`Loaded "${p.name}"`, 'bot');
+    }
+  }));
+  addMessage(msg, 'bot', actions);
+}
+
+function newProject() {
+  currentProject = null;
+  conversationHistory = [];
+  closePreview();
+  closeCode();
+  suggestions.innerHTML = '';
+  addMessage('New project!', 'bot');
+}
+
+function copyCode() {
+  navigator.clipboard.writeText(codeContent.textContent).then(() => {
+    const orig = document.getElementById('copyCodeBtn').textContent;
+    document.getElementById('copyCodeBtn').textContent = 'Copied!';
+    setTimeout(() => document.getElementById('copyCodeBtn').textContent = orig, 2000);
+  });
+}
+
+function refreshPage() {
+  location.reload();
+}
+
+// Event listeners
+sendBtn.addEventListener('click', send);
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+});
+
+document.getElementById('clearMemBtn').addEventListener('click', clearMemory);
+document.getElementById('showMemBtn').addEventListener('click', showMemory);
+document.getElementById('exportBtn').addEventListener('click', exportCode);
+document.getElementById('newProjBtn').addEventListener('click', newProject);
+document.getElementById('refreshBtn').addEventListener('click', refreshPage);
+document.getElementById('copyCodeBtn').addEventListener('click', copyCode);
+document.getElementById('closeCodeBtn').addEventListener('click', closeCode);
+document.getElementById('refreshPreviewBtn').addEventListener('click', refreshPreview);
+document.getElementById('closePreviewBtn').addEventListener('click', closePreview);
+
+document.getElementById('attachBtn').addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', (e) => {
+  if (e.target.files.length) {
+    handleFiles(e.target.files);
+    e.target.value = '';
+  }
+});
+
+document.getElementById('genImageBtn').addEventListener('click', () => generateMedia('image'));
+document.getElementById('genVideoBtn').addEventListener('click', () => generateMedia('video'));
+document.getElementById('genSoundBtn').addEventListener('click', () => generateMedia('sound'));
+
+addMessage('Ay! I\'m Lil Cuh - ultra-intelligent AI. I can code, create images/videos/sounds, solve math, analyze your files, give health advice, share 1000+ recipes, and more. What\'s good?', 'bot');
+showSuggestions(['Generate a galaxy image', 'Build me a calculator', 'Create a drumbeat sound', 'Solve 2x + 5 = 15']);
+updateMemory();
+</script>
+</body>
+</html>
