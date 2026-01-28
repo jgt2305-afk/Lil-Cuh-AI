@@ -27,7 +27,49 @@ body{background:radial-gradient(circle at top,#24001a,var(--bg));display:flex;ju
 .message{max-width:75%;margin-bottom:14px;padding:12px 14px;border-radius:14px;line-height:1.5;font-size:14px;animation:slideIn .3s ease;word-wrap:break-word;}
 @keyframes slideIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
 .user{margin-left:auto;background:linear-gradient(90deg,#1f1f1f,#121212);}
-.bot{background:rgba(255,59,157,.15);border:1px solid rgba(255,59,157,.4);white-space:pre-wrap;}
+.bot{
+  background:rgba(255,59,157,.15);
+  border:1px solid rgba(255,59,157,.4);
+  white-space:pre-wrap;
+  padding-left:50px;
+  position:relative;
+}
+.bot::before{
+  content:"";
+  position:absolute;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  width:0;
+  height:0;
+  border-left:12px solid transparent;
+  border-right:12px solid transparent;
+  border-bottom:20px solid #a855f7;
+  transition:transform .3s ease;
+}
+.bot::after{
+  content:"";
+  position:absolute;
+  left:8px;
+  top:50%;
+  transform:translateY(-50%) translateY(-15px);
+  width:24px;
+  height:10px;
+  background:linear-gradient(90deg, #06b6d4, #0ea5e9);
+  border-radius:0 0 6px 6px;
+  box-shadow:0 0 10px rgba(6,182,212,.6);
+  transition:transform .3s ease;
+}
+.bot.thinking::before{
+  animation:iconPulse .6s ease-in-out infinite;
+}
+.bot.thinking::after{
+  animation:iconPulse .6s ease-in-out infinite;
+}
+@keyframes iconPulse{
+  0%, 100%{transform:translateY(-50%) scale(1);}
+  50%{transform:translateY(-50%) scale(1.1);}
+}
 .thinking{opacity:.6;font-style:italic;}
 .error{background:rgba(255,31,61,.2);border:1px solid var(--red);color:#ffaaaa;}
 .message img,.message video,.message audio{max-width:100%;border-radius:8px;margin-top:8px;display:block;}
@@ -125,6 +167,15 @@ let projectMemory = [];
 let currentProject = null;
 let isProcessing = false;
 let attachedFiles = [];
+let userMemory = {
+  name: '',
+  preferences: {},
+  conversationSummaries: [],
+  importantFacts: [],
+  projects: [],
+  created: new Date().toISOString(),
+  lastUpdated: new Date().toISOString()
+};
 
 const chat = document.getElementById('chat');
 const input = document.getElementById('input');
@@ -190,7 +241,15 @@ function showThinking() {
 }
 
 function removeMessage(el) {
-  if (el && el.parentNode) el.parentNode.removeChild(el);
+  if (el && el.parentNode) {
+    // Remove thinking class from all bot messages when removing thinking indicator
+    if (el.classList.contains('thinking')) {
+      document.querySelectorAll('.bot.thinking').forEach(msg => {
+        if (msg !== el) msg.classList.remove('thinking');
+      });
+    }
+    el.parentNode.removeChild(el);
+  }
 }
 
 function showSuggestions(sug) {
@@ -233,6 +292,19 @@ function buildContext() {
   let ctx = '';
   if (currentProject) ctx += `\n\nCURRENT PROJECT: ${currentProject.name}\n${currentProject.description}`;
   if (projectMemory.length) ctx += `\n\nPREVIOUS PROJECTS: ${projectMemory.map(p => p.name).join(', ')}`;
+  
+  // Add user memory context
+  if (userMemory.name) ctx += `\n\nUSER NAME: ${userMemory.name}`;
+  if (Object.keys(userMemory.preferences).length > 0) {
+    ctx += `\n\nUSER PREFERENCES: ${JSON.stringify(userMemory.preferences)}`;
+  }
+  if (userMemory.importantFacts.length > 0) {
+    ctx += `\n\nIMPORTANT FACTS ABOUT USER: ${userMemory.importantFacts.join(', ')}`;
+  }
+  if (userMemory.conversationSummaries.length > 0) {
+    ctx += `\n\nPAST CONVERSATION SUMMARIES: ${userMemory.conversationSummaries.slice(-3).join(' | ')}`;
+  }
+  
   return ctx;
 }
 
@@ -553,6 +625,120 @@ function refreshPage() {
   location.reload();
 }
 
+async function createMemoryFile() {
+  addMessage('Creating your memory file...', 'bot');
+  const thinking = showThinking();
+  
+  try {
+    // Ask AI to analyze conversation and extract important info
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system: `You are analyzing a conversation to create a memory file. Extract:
+1. User's name (if mentioned)
+2. User preferences (coding style, design preferences, favorite foods, etc.)
+3. Important facts about the user (their job, hobbies, goals, etc.)
+4. A brief summary of what you've discussed
+
+Respond ONLY in this JSON format:
+{
+  "name": "user's name or empty string",
+  "preferences": {"key": "value"},
+  "importantFacts": ["fact1", "fact2"],
+  "conversationSummary": "brief summary of conversation"
+}`,
+        messages: conversationHistory.slice(-10),
+        max_tokens: 1000
+      })
+    });
+    
+    const data = await response.json();
+    removeMessage(thinking);
+    
+    if (data.content && data.content[0]) {
+      let reply = data.content[0].text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      
+      try {
+        const extracted = JSON.parse(reply);
+        
+        // Update user memory
+        if (extracted.name) userMemory.name = extracted.name;
+        if (extracted.preferences) userMemory.preferences = {...userMemory.preferences, ...extracted.preferences};
+        if (extracted.importantFacts) userMemory.importantFacts.push(...extracted.importantFacts);
+        if (extracted.conversationSummary) userMemory.conversationSummaries.push(extracted.conversationSummary);
+        
+        userMemory.projects = projectMemory;
+        userMemory.lastUpdated = new Date().toISOString();
+        
+        // Create downloadable memory file
+        const memoryData = JSON.stringify(userMemory, null, 2);
+        const blob = new Blob([memoryData], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `lilcuh_memory_${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        
+        addMessage(`Memory file created! ${userMemory.name ? `I'll remember you, ${userMemory.name}!` : 'I\'ll remember our conversation!'}\n\nWhat I learned:\n- ${userMemory.importantFacts.length} facts about you\n- ${Object.keys(userMemory.preferences).length} preferences\n- ${userMemory.conversationSummaries.length} conversation summaries\n\nFile downloaded! Upload it next time to restore my memory.`, 'bot');
+        
+      } catch (e) {
+        addMessage('Memory extraction complete, but formatting had issues. Still saved what I could!', 'bot');
+        
+        // Save basic memory anyway
+        const memoryData = JSON.stringify(userMemory, null, 2);
+        const blob = new Blob([memoryData], {type: 'application/json'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `lilcuh_memory_${Date.now()}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+    }
+    
+  } catch (err) {
+    removeMessage(thinking);
+    addMessage('Failed to create memory file. Try again?', 'error');
+  }
+}
+
+function loadMemoryFile() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.json';
+  
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    try {
+      const text = await file.text();
+      const loadedMemory = JSON.parse(text);
+      
+      // Validate and load memory
+      if (loadedMemory.created && loadedMemory.lastUpdated) {
+        userMemory = loadedMemory;
+        
+        if (loadedMemory.projects && loadedMemory.projects.length > 0) {
+          projectMemory = loadedMemory.projects;
+          updateMemory();
+        }
+        
+        addMessage(`Memory restored! ${userMemory.name ? `Welcome back, ${userMemory.name}!` : 'Welcome back!'}\n\nI remember:\n- ${userMemory.importantFacts.length} facts about you\n- ${Object.keys(userMemory.preferences).length} preferences\n- ${userMemory.conversationSummaries.length} past conversations\n- ${projectMemory.length} projects\n\nLet's continue where we left off!`, 'bot');
+      } else {
+        addMessage('Invalid memory file format.', 'error');
+      }
+      
+    } catch (err) {
+      addMessage('Failed to load memory file. Make sure it\'s a valid Lil Cuh memory file.', 'error');
+    }
+  };
+  
+  input.click();
+}
+
 // Event listeners
 sendBtn.addEventListener('click', send);
 input.addEventListener('keydown', (e) => {
@@ -562,6 +748,8 @@ input.addEventListener('keydown', (e) => {
   }
 });
 
+document.getElementById('createMemoryBtn').addEventListener('click', createMemoryFile);
+document.getElementById('loadMemoryBtn').addEventListener('click', loadMemoryFile);
 document.getElementById('clearMemBtn').addEventListener('click', clearMemory);
 document.getElementById('showMemBtn').addEventListener('click', showMemory);
 document.getElementById('exportBtn').addEventListener('click', exportCode);
