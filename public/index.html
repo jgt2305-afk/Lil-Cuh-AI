@@ -115,6 +115,10 @@ iframe{width:100%;height:260px;background:white;border:1px solid rgba(255,59,157
   <div class="header">
     <h1><span class="status-dot"></span> Lil Cuh AI</h1>
     <p>Ultra-intelligent: Coding + Health + Master Chef + Vision AI + Media Creator</p>
+    <div style="margin-top:12px;display:flex;flex-direction:column;align-items:center;gap:4px;">
+      <div id="clock" style="font-size:28px;font-weight:700;color:var(--pink);text-shadow:0 0 20px rgba(255,59,157,.8);letter-spacing:2px;"></div>
+      <div id="date" style="font-size:13px;color:rgba(255,59,157,.8);font-weight:600;"></div>
+    </div>
     <div class="controls">
       <button id="createMemoryBtn">Create Memory File</button>
       <button id="loadMemoryBtn">Load Memory File</button>
@@ -498,7 +502,28 @@ async function send() {
       body: JSON.stringify({
         system: `You are Lil Cuh, ultra-intelligent AI expert in coding, health, fitness, medical diagnosis, culinary arts (1000+ recipes), MATHEMATICS, and MEDIA CREATION (images, videos, sounds). You're a creative genius who can build anything. Casual but expert-level.
 
-CRITICAL: For code/build requests, respond ONLY with complete HTML. No explanations.
+CRITICAL HTML BUILDING RULES:
+1. For code/build requests, respond with ONLY complete, PERFECT HTML. No explanations before the code.
+2. AFTER the HTML code, on a new line, add "---EXPLANATION---" then explain what you built:
+   - What features you added
+   - How it works
+   - What the user can do with it
+   - Any cool details or easter eggs
+3. The HTML MUST work PERFECTLY with ZERO bugs - test your logic before responding
+4. The HTML must do EXACTLY what the user specified - no shortcuts, no "simplified versions"
+5. If user asks for specific features, colors, behaviors - include ALL of them
+6. Make sure all interactive elements work properly
+7. Include proper error handling in the code
+
+Example response format:
+<!DOCTYPE html>
+<html>... complete working code ...</html>
+
+---EXPLANATION---
+I built you a [description]. Here's what I added:
+- Feature 1: [explanation]
+- Feature 2: [explanation]
+You can [how to use it]. [Any other cool details]
 
 For math: Solve equations step-by-step, explain concepts clearly, provide formulas.
 For calculators: Build working HTML calculators with proper math operations.
@@ -524,17 +549,33 @@ For file analysis: Analyze uploaded images, documents, or code and provide detai
       const reply = data.content[0].text;
       conversationHistory.push({ role: 'assistant', content: reply });
 
-      const isCode = reply.trim().startsWith('<!DOCTYPE') || 
-                     reply.trim().startsWith('<html') || 
-                     reply.includes('```html');
+      // Check if response contains HTML and explanation
+      const hasExplanation = reply.includes('---EXPLANATION---');
+      let codepart = reply;
+      let explanation = '';
+      
+      if (hasExplanation) {
+        const parts = reply.split('---EXPLANATION---');
+        codepart = parts[0].trim();
+        explanation = parts[1] ? parts[1].trim() : '';
+      }
+
+      const isCode = codepart.trim().startsWith('<!DOCTYPE') || 
+                     codepart.trim().startsWith('<html') || 
+                     codepart.includes('```html');
 
       if (isCode) {
-        let code = reply.replace(/```html\n?/gi, '').replace(/```\n?/g, '');
+        let code = codepart.replace(/```html\n?/gi, '').replace(/```\n?/g, '');
         const match = code.match(/(<!DOCTYPE[\s\S]*<\/html>)/i) || code.match(/(<html[\s\S]*<\/html>)/i);
         if (match) code = match[1];
         
         const name = extractProjectName(userMessage) || `Project_${Date.now()}`;
         saveProject(name, code.trim(), userMessage);
+        
+        // Show explanation if provided
+        if (explanation) {
+          addMessage(explanation, 'bot');
+        }
         
         addMessage('Here you go!', 'bot', [
           { label: 'Modify', handler: () => { input.value = 'modify this: '; input.focus(); }},
@@ -771,6 +812,32 @@ fileInput.addEventListener('change', (e) => {
 document.getElementById('genImageBtn').addEventListener('click', () => generateMedia('image'));
 document.getElementById('genVideoBtn').addEventListener('click', () => generateMedia('video'));
 document.getElementById('genSoundBtn').addEventListener('click', () => generateMedia('sound'));
+
+// Clock and Date
+function updateClock() {
+  const now = new Date();
+  
+  let hours = now.getHours();
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  
+  hours = hours % 12;
+  hours = hours ? hours : 12; // 0 becomes 12
+  
+  const timeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} ${ampm}`;
+  
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  
+  const dateStr = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+  
+  document.getElementById('clock').textContent = timeStr;
+  document.getElementById('date').textContent = dateStr;
+}
+
+updateClock();
+setInterval(updateClock, 1000);
 
 addMessage('Ay! I\'m Lil Cuh - ultra-intelligent AI. I can code, create images/videos/sounds, solve math, analyze your files, give health advice, share 1000+ recipes, and more. What\'s good?', 'bot');
 showSuggestions(['Generate a galaxy image', 'Build me a calculator', 'Create a drumbeat sound', 'Solve 2x + 5 = 15']);
