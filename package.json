@@ -1,18 +1,13 @@
 {
   "name": "lilcuh-enhanced",
   "version": "2.0.0",
-  "description": "Lil Cuh AI - Enhanced with code validation, web scraping, and Steam guides",
+  "description": "Lil Cuh AI - Enhanced with web scraping, game guides, bug checking",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
+    "start": "node index.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "vm2": "^3.9.19"
-  },
-  "devDependencies": {
-    "nodemon": "^3.0.2"
+    "express": "^4.18.2"
   },
   "engines": {
     "node": ">=18.0.0"
@@ -20,7 +15,7 @@
   "keywords": [
     "ai",
     "chatbot",
-    "code-generation",
+    "claude",
     "web-scraping",
     "steam-guides"
   ]
