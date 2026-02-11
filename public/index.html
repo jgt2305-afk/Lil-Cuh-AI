@@ -3,141 +3,132 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lil Cuh AI</title>
+<title>Lil Cuh AI - Enhanced</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--pink:#ff3b9d;--red:#ff1f3d;--bg:#0a000f;--panel:#120018;--soft:#1a0023;}
+:root{--cyan:#00ffff;--dark-cyan:#00bfbf;--deep-cyan:#008b8b;--bg:#0a0015;--panel:#0f001a;--soft:#15002a;}
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{width:100%;height:100%;font-family:'Inter',sans-serif;overflow:hidden;}
-body{background:radial-gradient(circle at top,#24001a,var(--bg));display:flex;justify-content:center;align-items:center;color:white;}
-.app{width:95%;max-width:1000px;height:92vh;background:rgba(18,0,24,.92);border-radius:22px;box-shadow:0 0 45px rgba(255,59,157,.45);display:flex;flex-direction:column;padding:18px;}
-.header{text-align:center;padding-bottom:10px;border-bottom:1px solid rgba(255,59,157,.25);flex-shrink:0;}
-.header h1{margin:0 0 4px;font-size:26px;color:var(--pink);display:flex;align-items:center;justify-content:center;gap:8px;}
-.status-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;}
+body{background:radial-gradient(circle at top,#001a2e,var(--bg));display:flex;justify-content:center;align-items:center;color:white;}
+.app{width:95%;max-width:1100px;height:92vh;background:rgba(15,0,26,.95);border-radius:22px;box-shadow:0 0 50px rgba(0,255,255,.5),0 0 100px rgba(0,255,255,.2);display:flex;flex-direction:column;padding:18px;border:2px solid rgba(0,255,255,.3);}
+.header{text-align:center;padding-bottom:12px;border-bottom:2px solid rgba(0,255,255,.3);flex-shrink:0;}
+.header h1{margin:0 0 6px;font-size:28px;color:var(--cyan);display:flex;align-items:center;justify-content:center;gap:8px;text-shadow:0 0 20px rgba(0,255,255,.8);}
+.status-dot{width:10px;height:10px;border-radius:50%;background:var(--cyan);animation:pulse 2s infinite;box-shadow:0 0 15px var(--cyan);}
 @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.5;}}
-.header p{margin:0;font-size:13px;opacity:.7;}
-.controls{display:flex;gap:8px;justify-content:center;margin-top:8px;flex-wrap:wrap;}
-.controls button{padding:6px 12px;border:1px solid rgba(255,59,157,.3);border-radius:8px;background:rgba(255,59,157,.1);color:var(--pink);font-size:11px;cursor:pointer;transition:all .2s;font-family:inherit;}
-.controls button:hover{background:rgba(255,59,157,.2);transform:translateY(-1px);}
-.memory-indicator{font-size:10px;opacity:.5;margin-top:4px;}
-.chat{flex:1;margin-top:12px;padding:14px;background:var(--panel);border-radius:16px;overflow-y:auto;min-height:0;}
-.chat::-webkit-scrollbar{width:8px;}
-.chat::-webkit-scrollbar-track{background:rgba(255,59,157,.1);border-radius:4px;}
-.chat::-webkit-scrollbar-thumb{background:rgba(255,59,157,.3);border-radius:4px;}
-.message{max-width:75%;margin-bottom:14px;padding:12px 14px;border-radius:14px;line-height:1.5;font-size:14px;animation:slideIn .3s ease;word-wrap:break-word;}
+.header p{margin:0;font-size:13px;opacity:.85;color:var(--cyan);}
+.controls{display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap;}
+.controls button{padding:7px 14px;border:2px solid rgba(0,255,255,.4);border-radius:10px;background:rgba(0,255,255,.15);color:var(--cyan);font-size:11px;cursor:pointer;transition:all .2s;font-family:inherit;font-weight:600;}
+.controls button:hover{background:rgba(0,255,255,.3);transform:translateY(-2px);box-shadow:0 4px 15px rgba(0,255,255,.4);}
+.memory-indicator{font-size:10px;opacity:.7;margin-top:6px;color:var(--cyan);}
+.chat{flex:1;margin-top:12px;padding:16px;background:var(--panel);border-radius:16px;overflow-y:auto;min-height:0;border:1px solid rgba(0,255,255,.2);}
+.chat::-webkit-scrollbar{width:10px;}
+.chat::-webkit-scrollbar-track{background:rgba(0,255,255,.1);border-radius:5px;}
+.chat::-webkit-scrollbar-thumb{background:rgba(0,255,255,.4);border-radius:5px;}
+.chat::-webkit-scrollbar-thumb:hover{background:rgba(0,255,255,.6);}
+.message{max-width:78%;margin-bottom:16px;padding:14px 16px;border-radius:16px;line-height:1.6;font-size:14px;animation:slideIn .3s ease;word-wrap:break-word;}
 @keyframes slideIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
-.user{margin-left:auto;background:linear-gradient(90deg,#1f1f1f,#121212);}
+.user{margin-left:auto;background:linear-gradient(135deg,#1a1a2e,#16213e);border:1px solid rgba(0,255,255,.2);}
 .bot{
-  background:rgba(255,59,157,.15);
-  border:1px solid rgba(255,59,157,.4);
+  background:rgba(0,255,255,.12);
+  border:2px solid rgba(0,255,255,.4);
   white-space:pre-wrap;
-  padding-left:50px;
+  padding-left:55px;
   position:relative;
+  box-shadow:0 4px 15px rgba(0,255,255,.2);
 }
 .bot::before{
-  content:"";
+  content:"🤖";
   position:absolute;
-  left:12px;
+  left:14px;
   top:50%;
   transform:translateY(-50%);
-  width:0;
-  height:0;
-  border-left:12px solid transparent;
-  border-right:12px solid transparent;
-  border-bottom:20px solid #a855f7;
-  transition:transform .3s ease;
-}
-.bot::after{
-  content:"";
-  position:absolute;
-  left:8px;
-  top:50%;
-  transform:translateY(-50%) translateY(-15px);
-  width:24px;
-  height:10px;
-  background:linear-gradient(90deg, #06b6d4, #0ea5e9);
-  border-radius:0 0 6px 6px;
-  box-shadow:0 0 10px rgba(6,182,212,.6);
-  transition:transform .3s ease;
+  font-size:28px;
+  filter:drop-shadow(0 0 8px var(--cyan));
 }
 .bot.thinking::before{
   animation:iconPulse .6s ease-in-out infinite;
 }
-.bot.thinking::after{
-  animation:iconPulse .6s ease-in-out infinite;
-}
 @keyframes iconPulse{
   0%, 100%{transform:translateY(-50%) scale(1);}
-  50%{transform:translateY(-50%) scale(1.1);}
+  50%{transform:translateY(-50%) scale(1.15);}
 }
-.thinking{opacity:.6;font-style:italic;}
-.error{background:rgba(255,31,61,.2);border:1px solid var(--red);color:#ffaaaa;}
-.message img,.message video,.message audio{max-width:100%;border-radius:8px;margin-top:8px;display:block;}
-.message video{max-height:300px;}
+.thinking{opacity:.65;font-style:italic;}
+.error{background:rgba(255,50,50,.2);border:2px solid #ff3232;color:#ffaaaa;}
+.success{background:rgba(0,255,150,.15);border:2px solid #00ff96;color:#00ff96;}
+.message img,.message video,.message audio{max-width:100%;border-radius:10px;margin-top:10px;display:block;border:2px solid rgba(0,255,255,.3);}
+.message video{max-height:320px;}
 .message audio{width:100%;}
-.message-actions{display:flex;gap:6px;margin-top:8px;font-size:11px;}
-.message-actions button{padding:4px 8px;border:1px solid rgba(255,59,157,.2);border-radius:6px;background:rgba(0,0,0,.3);color:rgba(255,255,255,.6);cursor:pointer;transition:all .2s;}
-.message-actions button:hover{background:rgba(255,59,157,.2);color:white;}
-.file-preview-area{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;}
-.file-item{padding:6px 12px;background:rgba(255,59,157,.15);border:1px solid rgba(255,59,157,.3);border-radius:8px;font-size:12px;display:flex;align-items:center;gap:6px;}
-.file-item img{width:30px;height:30px;object-fit:cover;border-radius:4px;}
-.file-item button{background:none;border:none;color:var(--red);cursor:pointer;font-size:16px;padding:0;line-height:1;}
-.suggestions{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;padding:0 14px;flex-shrink:0;}
-.suggestion-chip{padding:6px 12px;border:1px solid rgba(255,59,157,.2);border-radius:12px;background:rgba(255,59,157,.05);color:rgba(255,255,255,.7);font-size:12px;cursor:pointer;transition:all .2s;}
-.suggestion-chip:hover{background:rgba(255,59,157,.15);border-color:rgba(255,59,157,.4);color:white;}
-.input-area{display:flex;gap:10px;margin-top:10px;flex-shrink:0;align-items:flex-end;}
+.message-actions{display:flex;gap:6px;margin-top:10px;font-size:11px;}
+.message-actions button{padding:5px 10px;border:1px solid rgba(0,255,255,.3);border-radius:8px;background:rgba(0,255,255,.1);color:var(--cyan);cursor:pointer;transition:all .2s;font-weight:600;}
+.message-actions button:hover{background:rgba(0,255,255,.25);box-shadow:0 2px 10px rgba(0,255,255,.3);}
+.file-preview-area{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
+.file-item{padding:8px 14px;background:rgba(0,255,255,.15);border:2px solid rgba(0,255,255,.3);border-radius:10px;font-size:12px;display:flex;align-items:center;gap:8px;}
+.file-item img{width:35px;height:35px;object-fit:cover;border-radius:6px;}
+.file-item button{background:none;border:none;color:#ff3232;cursor:pointer;font-size:18px;padding:0;line-height:1;}
+.suggestions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding:0 14px;flex-shrink:0;}
+.suggestion-chip{padding:7px 14px;border:2px solid rgba(0,255,255,.3);border-radius:14px;background:rgba(0,255,255,.08);color:var(--cyan);font-size:12px;cursor:pointer;transition:all .2s;font-weight:600;}
+.suggestion-chip:hover{background:rgba(0,255,255,.2);border-color:rgba(0,255,255,.6);transform:translateY(-2px);box-shadow:0 4px 15px rgba(0,255,255,.3);}
+.input-area{display:flex;gap:12px;margin-top:12px;flex-shrink:0;align-items:flex-end;}
 .input-wrapper{flex:1;position:relative;}
-textarea{width:100%;padding:14px 14px 40px 14px;border-radius:14px;border:none;background:var(--soft);color:white;font-size:14px;resize:none;font-family:inherit;min-height:50px;max-height:120px;}
-textarea::placeholder{color:rgba(255,255,255,.5);}
-.input-tools{position:absolute;bottom:8px;left:8px;display:flex;gap:6px;}
-.input-tools button{padding:4px 10px;border:1px solid rgba(255,59,157,.3);border-radius:6px;background:rgba(0,0,0,.5);color:var(--pink);cursor:pointer;font-size:11px;transition:all .2s;}
-.input-tools button:hover{background:rgba(255,59,157,.2);}
-.send-btn{padding:14px 22px;border:none;border-radius:14px;cursor:pointer;font-weight:600;background:linear-gradient(90deg,var(--pink),var(--red));color:black;font-size:14px;}
-.send-btn:disabled{opacity:.5;}
-.code-panel{margin-top:10px;height:180px;background:#060008;border-radius:16px;padding:14px;overflow:auto;font-size:12px;font-family:monospace;white-space:pre-wrap;display:none;position:relative;}
+textarea{width:100%;padding:16px 16px 48px 16px;border-radius:16px;border:2px solid rgba(0,255,255,.3);background:var(--soft);color:white;font-size:14px;resize:none;font-family:inherit;min-height:55px;max-height:140px;}
+textarea::placeholder{color:rgba(0,255,255,.6);}
+textarea:focus{outline:none;border-color:var(--cyan);box-shadow:0 0 20px rgba(0,255,255,.3);}
+.input-tools{position:absolute;bottom:10px;left:10px;display:flex;gap:6px;}
+.input-tools button{padding:5px 12px;border:1px solid rgba(0,255,255,.4);border-radius:8px;background:rgba(0,0,0,.6);color:var(--cyan);cursor:pointer;font-size:11px;transition:all .2s;font-weight:600;}
+.input-tools button:hover{background:rgba(0,255,255,.2);box-shadow:0 0 10px rgba(0,255,255,.4);}
+.send-btn{padding:16px 26px;border:none;border-radius:16px;cursor:pointer;font-weight:700;background:linear-gradient(135deg,var(--cyan),var(--deep-cyan));color:#000;font-size:15px;box-shadow:0 4px 20px rgba(0,255,255,.4);}
+.send-btn:hover{transform:translateY(-2px);box-shadow:0 6px 25px rgba(0,255,255,.6);}
+.send-btn:disabled{opacity:.5;transform:none;}
+.code-panel{margin-top:12px;height:200px;background:#050010;border-radius:16px;padding:16px;overflow:auto;font-size:12px;font-family:monospace;white-space:pre-wrap;display:none;position:relative;border:2px solid rgba(0,255,255,.3);}
 .code-panel.visible{display:block;}
-.code-panel-header{position:absolute;top:10px;right:10px;display:flex;gap:6px;z-index:10;}
-.code-panel-btn{padding:4px 10px;border:1px solid rgba(255,59,157,.3);border-radius:6px;background:rgba(0,0,0,.5);color:var(--pink);cursor:pointer;font-size:11px;transition:all .2s;}
-.code-panel-btn:hover{background:rgba(255,59,157,.2);}
-.preview-container{margin-top:10px;position:relative;display:none;}
+.code-panel-header{position:absolute;top:12px;right:12px;display:flex;gap:6px;z-index:10;}
+.code-panel-btn{padding:5px 12px;border:1px solid rgba(0,255,255,.4);border-radius:8px;background:rgba(0,0,0,.7);color:var(--cyan);cursor:pointer;font-size:11px;transition:all .2s;font-weight:600;}
+.code-panel-btn:hover{background:rgba(0,255,255,.2);}
+.preview-container{margin-top:12px;position:relative;display:none;}
 .preview-container.visible{display:block;}
-.preview-header{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:rgba(255,59,157,.15);border:1px solid rgba(255,59,157,.4);border-radius:16px 16px 0 0;}
-.preview-title{color:var(--pink);font-size:12px;font-weight:600;}
+.preview-header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(0,255,255,.15);border:2px solid rgba(0,255,255,.4);border-radius:16px 16px 0 0;}
+.preview-title{color:var(--cyan);font-size:13px;font-weight:700;text-shadow:0 0 10px rgba(0,255,255,.6);}
 .preview-actions{display:flex;gap:6px;}
-.preview-btn{padding:4px 10px;border:1px solid rgba(255,59,157,.3);border-radius:6px;background:rgba(0,0,0,.3);color:var(--pink);cursor:pointer;font-size:11px;transition:all .2s;}
-.preview-btn:hover{background:rgba(255,59,157,.2);}
-iframe{width:100%;height:260px;background:white;border:1px solid rgba(255,59,157,.4);border-top:none;border-radius:0 0 16px 16px;display:block;}
+.preview-btn{padding:5px 12px;border:1px solid rgba(0,255,255,.4);border-radius:8px;background:rgba(0,0,0,.5);color:var(--cyan);cursor:pointer;font-size:11px;transition:all .2s;font-weight:600;}
+.preview-btn:hover{background:rgba(0,255,255,.2);}
+iframe{width:100%;height:280px;background:white;border:2px solid rgba(0,255,255,.4);border-top:none;border-radius:0 0 16px 16px;display:block;}
 #fileInput{display:none;}
+.validation-badge{display:inline-block;padding:4px 10px;border-radius:8px;font-size:10px;font-weight:700;margin-left:8px;}
+.validation-badge.pass{background:rgba(0,255,150,.2);color:#00ff96;border:1px solid #00ff96;}
+.validation-badge.fail{background:rgba(255,50,50,.2);color:#ff3232;border:1px solid #ff3232;}
+.loading-spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(0,255,255,.3);border-top-color:var(--cyan);border-radius:50%;animation:spin 1s linear infinite;margin-left:8px;}
+@keyframes spin{to{transform:rotate(360deg);}}
 </style>
 </head>
 <body>
 <div class="app">
   <div class="header">
-    <h1><span class="status-dot"></span> Lil Cuh AI</h1>
-    <p>Ultra-intelligent: Coding + Health + Master Chef + Vision AI + Media Creator</p>
-    <div style="margin-top:12px;display:flex;flex-direction:column;align-items:center;gap:4px;">
-      <div id="clock" style="font-size:28px;font-weight:700;color:var(--pink);text-shadow:0 0 20px rgba(255,59,157,.8);letter-spacing:2px;"></div>
-      <div id="date" style="font-size:13px;color:rgba(255,59,157,.8);font-weight:600;"></div>
+    <h1><span class="status-dot"></span> Lil Cuh AI <span style="font-size:14px;opacity:.7;">ENHANCED</span></h1>
+    <p>🚀 Elite Code Generation | 🌐 Web Access | 🎮 Steam Guides | 🔍 Bug Checker</p>
+    <div style="margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:5px;">
+      <div id="clock" style="font-size:30px;font-weight:700;color:var(--cyan);text-shadow:0 0 25px rgba(0,255,255,.9);letter-spacing:2px;"></div>
+      <div id="date" style="font-size:13px;color:rgba(0,255,255,.9);font-weight:600;"></div>
     </div>
     <div class="controls">
-      <button id="createMemoryBtn">Create Memory File</button>
-      <button id="loadMemoryBtn">Load Memory File</button>
-      <button id="clearMemBtn">Clear Memory</button>
-      <button id="showMemBtn">Show Memory</button>
-      <button id="exportBtn">Export Code</button>
-      <button id="newProjBtn">New Project</button>
-      <button id="refreshBtn">Refresh Page</button>
+      <button id="createMemoryBtn">💾 Save Memory</button>
+      <button id="loadMemoryBtn">📂 Load Memory</button>
+      <button id="clearMemBtn">🗑️ Clear</button>
+      <button id="showMemBtn">📋 Projects</button>
+      <button id="exportBtn">⬇️ Export</button>
+      <button id="newProjBtn">✨ New</button>
+      <button id="webAccessBtn">🌐 Web Access</button>
+      <button id="steamGuideBtn">🎮 Steam Guide</button>
     </div>
-    <div class="memory-indicator" id="memoryIndicator">Memory: 0 projects tracked</div>
+    <div class="memory-indicator" id="memoryIndicator">Memory: 0 projects | Features: All Active</div>
   </div>
   <div id="chat" class="chat"></div>
   <div id="suggestions" class="suggestions"></div>
   <div class="input-area">
     <div class="input-wrapper">
       <div id="filePreviewArea" class="file-preview-area"></div>
-      <textarea id="input" placeholder="Ask me to create images, videos, sounds, code, solve math, or upload files to analyze..."></textarea>
+      <textarea id="input" placeholder="Ask me anything! I can code, access websites, guide you through Steam games, and more..."></textarea>
       <div class="input-tools">
-        <button id="attachBtn">📎 Attach File</button>
+        <button id="attachBtn">📎 File</button>
         <button id="genImageBtn">🎨 Image</button>
         <button id="genVideoBtn">🎬 Video</button>
         <button id="genSoundBtn">🎵 Sound</button>
@@ -148,17 +139,17 @@ iframe{width:100%;height:260px;background:white;border:1px solid rgba(255,59,157
   <input type="file" id="fileInput" multiple accept="image/*,video/*,audio/*,.pdf,.txt,.html,.css,.js,.json,.md,.doc,.docx">
   <div id="codePanel" class="code-panel">
     <div class="code-panel-header">
-      <button class="code-panel-btn" id="copyCodeBtn">Copy</button>
-      <button class="code-panel-btn" id="closeCodeBtn">Close</button>
+      <button class="code-panel-btn" id="copyCodeBtn">📋 Copy</button>
+      <button class="code-panel-btn" id="closeCodeBtn">✖ Close</button>
     </div>
-    <div id="codeContent" style="margin-top:30px;"></div>
+    <div id="codeContent" style="margin-top:35px;"></div>
   </div>
   <div id="previewContainer" class="preview-container">
     <div class="preview-header">
-      <div class="preview-title">Preview</div>
+      <div class="preview-title">🔍 Live Preview</div>
       <div class="preview-actions">
-        <button class="preview-btn" id="refreshPreviewBtn">Refresh</button>
-        <button class="preview-btn" id="closePreviewBtn">Close</button>
+        <button class="preview-btn" id="refreshPreviewBtn">🔄 Refresh</button>
+        <button class="preview-btn" id="closePreviewBtn">✖ Close</button>
       </div>
     </div>
     <iframe id="preview" sandbox="allow-scripts allow-same-origin"></iframe>
@@ -246,12 +237,6 @@ function showThinking() {
 
 function removeMessage(el) {
   if (el && el.parentNode) {
-    // Remove thinking class from all bot messages when removing thinking indicator
-    if (el.classList.contains('thinking')) {
-      document.querySelectorAll('.bot.thinking').forEach(msg => {
-        if (msg !== el) msg.classList.remove('thinking');
-      });
-    }
     el.parentNode.removeChild(el);
   }
 }
@@ -271,7 +256,7 @@ function showSuggestions(sug) {
 }
 
 function updateMemory() {
-  memoryIndicator.textContent = `Memory: ${projectMemory.length} projects tracked`;
+  memoryIndicator.textContent = `Memory: ${projectMemory.length} projects | 🟢 All Systems Active`;
 }
 
 function saveProject(name, code, desc) {
@@ -282,14 +267,14 @@ function saveProject(name, code, desc) {
     projectMemory[idx] = project;
   } else {
     projectMemory.push(project);
-    if (projectMemory.length > 10) projectMemory.shift();
+    if (projectMemory.length > 15) projectMemory.shift();
   }
   updateMemory();
 }
 
 function extractProjectName(msg) {
   const match = msg.match(/(?:make|build|create|design|generate)\s+(?:a|an|me)?\s*(.+?)(?:\s+for|\s+with|\s+that|$)/i);
-  return match && match[1] ? match[1].trim().substring(0, 30) : null;
+  return match && match[1] ? match[1].trim().substring(0, 35) : null;
 }
 
 function buildContext() {
@@ -297,16 +282,12 @@ function buildContext() {
   if (currentProject) ctx += `\n\nCURRENT PROJECT: ${currentProject.name}\n${currentProject.description}`;
   if (projectMemory.length) ctx += `\n\nPREVIOUS PROJECTS: ${projectMemory.map(p => p.name).join(', ')}`;
   
-  // Add user memory context
-  if (userMemory.name) ctx += `\n\nUSER NAME: ${userMemory.name}`;
+  if (userMemory.name) ctx += `\n\nUSER: ${userMemory.name}`;
   if (Object.keys(userMemory.preferences).length > 0) {
-    ctx += `\n\nUSER PREFERENCES: ${JSON.stringify(userMemory.preferences)}`;
+    ctx += `\n\nPREFERENCES: ${JSON.stringify(userMemory.preferences)}`;
   }
   if (userMemory.importantFacts.length > 0) {
-    ctx += `\n\nIMPORTANT FACTS ABOUT USER: ${userMemory.importantFacts.join(', ')}`;
-  }
-  if (userMemory.conversationSummaries.length > 0) {
-    ctx += `\n\nPAST CONVERSATION SUMMARIES: ${userMemory.conversationSummaries.slice(-3).join(' | ')}`;
+    ctx += `\n\nFACTS: ${userMemory.importantFacts.join(', ')}`;
   }
   
   return ctx;
@@ -398,141 +379,183 @@ async function generateMedia(type) {
   input.value = '';
   
   addMessage(`Generating ${type}: "${prompt}"...`, 'bot');
-  const thinking = showThinking();
-  
+  // Placeholder - actual generation would happen here
+  addMessage(`Media generation coming soon! For now, try asking me to create SVG graphics, canvas animations, or Web Audio API sounds.`, 'bot');
+}
+
+// Code validation function
+async function validateCode(code, language) {
   try {
-    let systemPrompt = '';
-    
-    if (type === 'image') {
-      systemPrompt = `Create an SVG image of: ${prompt}. Respond with ONLY the SVG code, no explanations.`;
-    } else if (type === 'video') {
-      systemPrompt = `Create an HTML5 video animation of: ${prompt}. Use Canvas API or CSS animations. Respond with ONLY complete HTML code including autoplay video/animation. Make it visually impressive.`;
-    } else if (type === 'sound') {
-      systemPrompt = `Create an HTML audio synthesizer that generates sound for: ${prompt}. Use Web Audio API. Respond with ONLY complete HTML code with auto-play button. Include waveform visualization if possible.`;
-    }
-    
-    const response = await fetch('/api/chat', {
+    const response = await fetch('/api/validate-code', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        messages: [{ role: 'user', content: systemPrompt }],
-        max_tokens: 3000
-      })
+      body: JSON.stringify({ code, language })
     });
     
-    const data = await response.json();
+    if (!response.ok) throw new Error('Validation failed');
+    
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error('Validation error:', error);
+    return { isValid: false, errors: [error.message], warnings: [], suggestions: [] };
+  }
+}
+
+// Web scraping function
+async function scrapeWebsite(url) {
+  try {
+    addMessage(`🌐 Scraping: ${url}`, 'bot');
+    const thinking = showThinking();
+    
+    const response = await fetch('/api/scrape', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ url })
+    });
+    
     removeMessage(thinking);
     
-    if (data.content && data.content[0]) {
-      const reply = data.content[0].text;
-      
-      if (type === 'image') {
-        let svg = reply.replace(/```svg\n?/g, '').replace(/```\n?/g, '').trim();
-        const blob = new Blob([svg], {type: 'image/svg+xml'});
-        const url = URL.createObjectURL(blob);
-        addMessage(`Here's your ${type}!`, 'bot', [
-          {label: 'Download', handler: () => {
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${prompt.substring(0,20)}.svg`;
-            a.click();
-          }}
-        ], url, 'image');
-      } else {
-        // For video and audio, create interactive HTML
-        let code = reply.replace(/```html\n?/gi, '').replace(/```\n?/g, '');
-        const match = code.match(/(<!DOCTYPE[\s\S]*<\/html>)/i) || code.match(/(<html[\s\S]*<\/html>)/i);
-        if (match) code = match[1];
-        
-        const blob = new Blob([code.trim()], {type: 'text/html'});
-        const url = URL.createObjectURL(blob);
-        
-        addMessage(`Here's your ${type}! Click to open:`, 'bot', [
-          {label: 'Open in New Tab', handler: () => window.open(url, '_blank')},
-          {label: 'Preview Below', handler: () => runPreview(code.trim())}
-        ]);
-      }
+    if (!response.ok) throw new Error('Scraping failed');
+    
+    const data = await response.json();
+    
+    if (data.success) {
+      addMessage(`✅ Successfully scraped ${(data.size / 1024).toFixed(1)} KB from ${data.url}\n\nContent preview:\n${data.textContent.substring(0, 500)}...`, 'success');
+      return data.textContent;
+    } else {
+      throw new Error('Scraping unsuccessful');
     }
-  } catch (e) {
+  } catch (error) {
+    addMessage(`❌ Failed to scrape: ${error.message}`, 'error');
+    return null;
+  }
+}
+
+// Steam guide function
+async function getSteamGuide(gameName) {
+  try {
+    addMessage(`🎮 Searching for: ${gameName}`, 'bot');
+    const thinking = showThinking();
+    
+    const response = await fetch('/api/steam-guide', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ gameName })
+    });
+    
     removeMessage(thinking);
-    addMessage(`${type} generation failed. Try again?`, 'error');
+    
+    if (!response.ok) throw new Error('Guide fetch failed');
+    
+    const data = await response.json();
+    
+    if (data.found) {
+      let guide = `🎮 ${data.title}\n\n${data.content}\n\n📚 Sections available:\n${data.sections.slice(0, 8).join(', ')}\n\n🔗 Full guide: ${data.url}`;
+      
+      if (data.relatedGames && data.relatedGames.length > 0) {
+        guide += `\n\n🎯 Related games: ${data.relatedGames.join(', ')}`;
+      }
+      
+      addMessage(guide, 'success', [
+        { label: 'Open Wikipedia', handler: () => window.open(data.url, '_blank') }
+      ]);
+    } else {
+      addMessage(`❌ ${data.message}`, 'error');
+    }
+  } catch (error) {
+    addMessage(`❌ Failed to get guide: ${error.message}`, 'error');
   }
 }
 
 async function send() {
-  const text = input.value.trim();
-  if (!text && attachedFiles.length === 0) return;
-  if (isProcessing) return;
+  const userMessage = input.value.trim();
+  if (!userMessage || isProcessing) return;
 
-  isProcessing = true;
-  input.disabled = true;
-  sendBtn.disabled = true;
-  
-  if (text) addMessage(text, 'user');
-  if (attachedFiles.length > 0) {
-    attachedFiles.forEach(f => addMessage(`📎 ${f.name}`, 'user'));
+  // Check for special commands
+  if (userMessage.toLowerCase().startsWith('scrape ')) {
+    const url = userMessage.substring(7).trim();
+    await scrapeWebsite(url);
+    input.value = '';
+    return;
   }
   
+  if (userMessage.toLowerCase().startsWith('steam ')) {
+    const gameName = userMessage.substring(6).trim();
+    await getSteamGuide(gameName);
+    input.value = '';
+    return;
+  }
+
+  isProcessing = true;
   input.value = '';
-  
+  input.disabled = true;
+  sendBtn.disabled = true;
+
   const thinking = showThinking();
+  addMessage(userMessage, 'user');
+
+  let content = userMessage;
+  let messageArray = [];
+
+  if (attachedFiles.length > 0) {
+    messageArray = attachedFiles.map(f => {
+      if (f.base64 && f.type.startsWith('image/')) {
+        return { type: 'image', source: { type: 'base64', media_type: f.type, data: f.base64 }};
+      } else if (f.text) {
+        return { type: 'text', text: `File: ${f.name}\n\n${f.text}`};
+      }
+    }).filter(Boolean);
+    
+    messageArray.push({ type: 'text', text: userMessage });
+    content = messageArray;
+  }
+
+  conversationHistory.push({ role: 'user', content });
 
   try {
-    let userMessage = text || 'Analyze the attached files';
-    const messageContent = [];
-    
-    // Add file attachments
-    for (let file of attachedFiles) {
-      if (file.base64 && file.type.startsWith('image/')) {
-        messageContent.push({
-          type: 'image',
-          source: { type: 'base64', media_type: file.type, data: file.base64 }
-        });
-      } else if (file.text) {
-        userMessage += `\n\nFile "${file.name}":\n${file.text}`;
-      }
-    }
-    
-    messageContent.push({ type: 'text', text: userMessage });
-    conversationHistory.push({ role: 'user', content: messageContent });
-
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        system: `You are Lil Cuh, ultra-intelligent AI expert in coding, health, fitness, medical diagnosis, culinary arts (1000+ recipes), MATHEMATICS, and MEDIA CREATION (images, videos, sounds). You're a creative genius who can build anything. Casual but expert-level.
+        system: `You are Lil Cuh AI - an ELITE, ultra-intelligent assistant with exceptional abilities.
 
-CRITICAL HTML BUILDING RULES:
-1. For code/build requests, respond with ONLY complete, PERFECT HTML. No explanations before the code.
-2. AFTER the HTML code, on a new line, add "---EXPLANATION---" then explain what you built:
-   - What features you added
-   - How it works
-   - What the user can do with it
-   - Any cool details or easter eggs
-3. The HTML MUST work PERFECTLY with ZERO bugs - test your logic before responding
-4. The HTML must do EXACTLY what the user specified - no shortcuts, no "simplified versions"
-5. If user asks for specific features, colors, behaviors - include ALL of them
-6. Make sure all interactive elements work properly
-7. Include proper error handling in the code
+🔥 ENHANCED CODE GENERATION RULES:
+You now have access to a CODE VALIDATOR that checks your code for bugs BEFORE showing it to the user. 
 
-Example response format:
-<!DOCTYPE html>
-<html>... complete working code ...</html>
+WORKFLOW FOR CODE GENERATION:
+1. Think through the problem carefully
+2. Write clean, bug-free code with:
+   - Proper error handling
+   - Input validation
+   - Modern best practices
+   - Clear comments
+   - Semantic naming
+3. The validator will check it automatically
+4. Explain what you built and how it works
 
----EXPLANATION---
-I built you a [description]. Here's what I added:
-- Feature 1: [explanation]
-- Feature 2: [explanation]
-You can [how to use it]. [Any other cool details]
+For HTML/web apps:
+- Include <!DOCTYPE html>
+- Use semantic HTML5
+- Modern CSS (flexbox/grid)
+- Clean JavaScript (const/let, no var)
+- Proper error handling
 
-For math: Solve equations step-by-step, explain concepts clearly, provide formulas.
-For calculators: Build working HTML calculators with proper math operations.
-For recipes: full recipe with ingredients, steps, times, tips.
-For health: ask questions, advice with disclaimers.
-For images: Create SVG graphics when requested.
-For videos: Build HTML5 canvas animations or CSS animations.
-For sounds: Use Web Audio API to generate tones, music, or sound effects.
-For file analysis: Analyze uploaded images, documents, or code and provide detailed insights.${buildContext()}`,
+SPECIAL CAPABILITIES:
+🌐 WEB ACCESS: User can ask you to scrape websites with "scrape [url]"
+🎮 STEAM GUIDES: User can get game guides with "steam [game name]"
+🔍 CODE VALIDATION: All code is automatically validated
+
+You can:
+- Create images (SVG), videos (canvas), sounds (Web Audio API)
+- Solve math problems step-by-step
+- Share recipes and health advice
+- Analyze uploaded files
+- Build games, calculators, apps, anything!
+
+${buildContext()}
+
+Be helpful, thorough, and write PERFECT code every time.`,
         messages: conversationHistory,
         max_tokens: 4096
       })
@@ -549,7 +572,7 @@ For file analysis: Analyze uploaded images, documents, or code and provide detai
       const reply = data.content[0].text;
       conversationHistory.push({ role: 'assistant', content: reply });
 
-      // Check if response contains HTML and explanation
+      // Check if response contains code
       const hasExplanation = reply.includes('---EXPLANATION---');
       let codepart = reply;
       let explanation = '';
@@ -562,24 +585,55 @@ For file analysis: Analyze uploaded images, documents, or code and provide detai
 
       const isCode = codepart.trim().startsWith('<!DOCTYPE') || 
                      codepart.trim().startsWith('<html') || 
-                     codepart.includes('```html');
+                     codepart.includes('```html') ||
+                     codepart.includes('```javascript') ||
+                     codepart.includes('```css');
 
       if (isCode) {
-        let code = codepart.replace(/```html\n?/gi, '').replace(/```\n?/g, '');
+        let code = codepart.replace(/```html\n?/gi, '').replace(/```javascript\n?/gi, '').replace(/```css\n?/gi, '').replace(/```\n?/g, '');
         const match = code.match(/(<!DOCTYPE[\s\S]*<\/html>)/i) || code.match(/(<html[\s\S]*<\/html>)/i);
         if (match) code = match[1];
         
         const name = extractProjectName(userMessage) || `Project_${Date.now()}`;
+        
+        // Validate the code before showing it
+        const validationThinking = addMessage('🔍 Validating code...', 'bot thinking');
+        const language = code.includes('<!DOCTYPE') || code.includes('<html') ? 'html' : 'javascript';
+        const validation = await validateCode(code, language);
+        removeMessage(validationThinking);
+        
+        // Show validation results
+        let validationMsg = `📊 Code Validation:\n`;
+        validationMsg += `Score: ${validation.score}/100 (Grade: ${validation.grade})\n`;
+        
+        if (validation.errors && validation.errors.length > 0) {
+          validationMsg += `\n❌ Errors:\n${validation.errors.map(e => '  • ' + e).join('\n')}`;
+        }
+        if (validation.warnings && validation.warnings.length > 0) {
+          validationMsg += `\n⚠️ Warnings:\n${validation.warnings.map(w => '  • ' + w).join('\n')}`;
+        }
+        if (validation.suggestions && validation.suggestions.length > 0) {
+          validationMsg += `\n💡 Suggestions:\n${validation.suggestions.map(s => '  • ' + s).join('\n')}`;
+        }
+        if (validation.isValid) {
+          validationMsg += '\n\n✅ Code looks great!';
+        }
+        
+        addMessage(validationMsg, validation.isValid ? 'success' : 'error');
+        
         saveProject(name, code.trim(), userMessage);
         
-        // Show explanation if provided
         if (explanation) {
           addMessage(explanation, 'bot');
         }
         
-        addMessage('Here you go!', 'bot', [
-          { label: 'Modify', handler: () => { input.value = 'modify this: '; input.focus(); }},
-          { label: 'Save', handler: exportCode }
+        const badge = validation.isValid ? 
+          '<span class="validation-badge pass">✓ VALIDATED</span>' : 
+          '<span class="validation-badge fail">⚠ HAS ISSUES</span>';
+        
+        addMessage(`Code ready! ${badge}`, 'bot', [
+          { label: '🔧 Modify', handler: () => { input.value = 'modify this: '; input.focus(); }},
+          { label: '💾 Save', handler: exportCode }
         ]);
         runPreview(code.trim());
       } else {
@@ -587,14 +641,13 @@ For file analysis: Analyze uploaded images, documents, or code and provide detai
       }
     }
     
-    // Clear attached files
     attachedFiles = [];
     filePreviewArea.innerHTML = '';
 
   } catch (err) {
     removeMessage(thinking);
     console.error('Error:', err);
-    addMessage(`Error: ${err.message}`, 'error');
+    addMessage(`❌ Error: ${err.message}`, 'error');
   } finally {
     isProcessing = false;
     input.disabled = false;
@@ -615,7 +668,7 @@ function exportCode() {
   a.download = `${currentProject.name.replace(/\s+/g, '_')}.html`;
   a.click();
   URL.revokeObjectURL(url);
-  addMessage('Exported!', 'bot');
+  addMessage('✅ Exported!', 'success');
 }
 
 function clearMemory() {
@@ -624,7 +677,7 @@ function clearMemory() {
     currentProject = null;
     conversationHistory = [];
     updateMemory();
-    addMessage('Memory cleared!', 'bot');
+    addMessage('🗑️ Memory cleared!', 'bot');
   }
 }
 
@@ -633,13 +686,13 @@ function showMemory() {
     addMessage('No projects yet!', 'bot');
     return;
   }
-  const msg = 'Your projects:\n\n' + projectMemory.map((p, i) => `${i+1}. ${p.name}`).join('\n');
+  const msg = '📋 Your projects:\n\n' + projectMemory.map((p, i) => `${i+1}. ${p.name}`).join('\n');
   const actions = projectMemory.slice(-3).map(p => ({
-    label: p.name.substring(0, 18),
+    label: p.name.substring(0, 20),
     handler: () => {
       runPreview(p.code);
       currentProject = p;
-      addMessage(`Loaded "${p.name}"`, 'bot');
+      addMessage(`✅ Loaded "${p.name}"`, 'success');
     }
   }));
   addMessage(msg, 'bot', actions);
@@ -651,43 +704,32 @@ function newProject() {
   closePreview();
   closeCode();
   suggestions.innerHTML = '';
-  addMessage('New project!', 'bot');
+  addMessage('✨ New project started!', 'bot');
 }
 
 function copyCode() {
   navigator.clipboard.writeText(codeContent.textContent).then(() => {
     const orig = document.getElementById('copyCodeBtn').textContent;
-    document.getElementById('copyCodeBtn').textContent = 'Copied!';
+    document.getElementById('copyCodeBtn').textContent = '✓ Copied!';
     setTimeout(() => document.getElementById('copyCodeBtn').textContent = orig, 2000);
   });
 }
 
-function refreshPage() {
-  location.reload();
-}
-
 async function createMemoryFile() {
-  addMessage('Creating your memory file...', 'bot');
+  addMessage('💾 Creating memory file...', 'bot');
   const thinking = showThinking();
   
   try {
-    // Ask AI to analyze conversation and extract important info
     const response = await fetch('/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        system: `You are analyzing a conversation to create a memory file. Extract:
-1. User's name (if mentioned)
-2. User preferences (coding style, design preferences, favorite foods, etc.)
-3. Important facts about the user (their job, hobbies, goals, etc.)
-4. A brief summary of what you've discussed
-
-Respond ONLY in this JSON format:
+        system: `Extract memory from conversation. Respond ONLY in JSON:
 {
-  "name": "user's name or empty string",
+  "name": "user's name or empty",
   "preferences": {"key": "value"},
   "importantFacts": ["fact1", "fact2"],
-  "conversationSummary": "brief summary of conversation"
+  "conversationSummary": "brief summary"
 }`,
         messages: conversationHistory.slice(-10),
         max_tokens: 1000
@@ -703,7 +745,6 @@ Respond ONLY in this JSON format:
       try {
         const extracted = JSON.parse(reply);
         
-        // Update user memory
         if (extracted.name) userMemory.name = extracted.name;
         if (extracted.preferences) userMemory.preferences = {...userMemory.preferences, ...extracted.preferences};
         if (extracted.importantFacts) userMemory.importantFacts.push(...extracted.importantFacts);
@@ -712,7 +753,6 @@ Respond ONLY in this JSON format:
         userMemory.projects = projectMemory;
         userMemory.lastUpdated = new Date().toISOString();
         
-        // Create downloadable memory file
         const memoryData = JSON.stringify(userMemory, null, 2);
         const blob = new Blob([memoryData], {type: 'application/json'});
         const url = URL.createObjectURL(blob);
@@ -722,12 +762,10 @@ Respond ONLY in this JSON format:
         a.click();
         URL.revokeObjectURL(url);
         
-        addMessage(`Memory file created! ${userMemory.name ? `I'll remember you, ${userMemory.name}!` : 'I\'ll remember our conversation!'}\n\nWhat I learned:\n- ${userMemory.importantFacts.length} facts about you\n- ${Object.keys(userMemory.preferences).length} preferences\n- ${userMemory.conversationSummaries.length} conversation summaries\n\nFile downloaded! Upload it next time to restore my memory.`, 'bot');
+        addMessage(`✅ Memory saved! ${userMemory.name ? `I'll remember you, ${userMemory.name}!` : 'I\'ll remember our conversation!'}\n\n- ${userMemory.importantFacts.length} facts\n- ${Object.keys(userMemory.preferences).length} preferences\n- ${userMemory.conversationSummaries.length} summaries`, 'success');
         
       } catch (e) {
-        addMessage('Memory extraction complete, but formatting had issues. Still saved what I could!', 'bot');
-        
-        // Save basic memory anyway
+        addMessage('✅ Basic memory saved!', 'success');
         const memoryData = JSON.stringify(userMemory, null, 2);
         const blob = new Blob([memoryData], {type: 'application/json'});
         const url = URL.createObjectURL(blob);
@@ -741,7 +779,7 @@ Respond ONLY in this JSON format:
     
   } catch (err) {
     removeMessage(thinking);
-    addMessage('Failed to create memory file. Try again?', 'error');
+    addMessage('❌ Failed to create memory', 'error');
   }
 }
 
@@ -758,7 +796,6 @@ function loadMemoryFile() {
       const text = await file.text();
       const loadedMemory = JSON.parse(text);
       
-      // Validate and load memory
       if (loadedMemory.created && loadedMemory.lastUpdated) {
         userMemory = loadedMemory;
         
@@ -767,13 +804,13 @@ function loadMemoryFile() {
           updateMemory();
         }
         
-        addMessage(`Memory restored! ${userMemory.name ? `Welcome back, ${userMemory.name}!` : 'Welcome back!'}\n\nI remember:\n- ${userMemory.importantFacts.length} facts about you\n- ${Object.keys(userMemory.preferences).length} preferences\n- ${userMemory.conversationSummaries.length} past conversations\n- ${projectMemory.length} projects\n\nLet's continue where we left off!`, 'bot');
+        addMessage(`✅ Memory restored! ${userMemory.name ? `Welcome back, ${userMemory.name}!` : 'Welcome back!'}\n\n- ${userMemory.importantFacts.length} facts\n- ${Object.keys(userMemory.preferences).length} preferences\n- ${projectMemory.length} projects`, 'success');
       } else {
-        addMessage('Invalid memory file format.', 'error');
+        addMessage('❌ Invalid memory file', 'error');
       }
       
     } catch (err) {
-      addMessage('Failed to load memory file. Make sure it\'s a valid Lil Cuh memory file.', 'error');
+      addMessage('❌ Failed to load memory file', 'error');
     }
   };
   
@@ -795,11 +832,20 @@ document.getElementById('clearMemBtn').addEventListener('click', clearMemory);
 document.getElementById('showMemBtn').addEventListener('click', showMemory);
 document.getElementById('exportBtn').addEventListener('click', exportCode);
 document.getElementById('newProjBtn').addEventListener('click', newProject);
-document.getElementById('refreshBtn').addEventListener('click', refreshPage);
 document.getElementById('copyCodeBtn').addEventListener('click', copyCode);
 document.getElementById('closeCodeBtn').addEventListener('click', closeCode);
 document.getElementById('refreshPreviewBtn').addEventListener('click', refreshPreview);
 document.getElementById('closePreviewBtn').addEventListener('click', closePreview);
+
+document.getElementById('webAccessBtn').addEventListener('click', () => {
+  const url = prompt('🌐 Enter URL to scrape:');
+  if (url) scrapeWebsite(url);
+});
+
+document.getElementById('steamGuideBtn').addEventListener('click', () => {
+  const game = prompt('🎮 Enter Steam game name:');
+  if (game) getSteamGuide(game);
+});
 
 document.getElementById('attachBtn').addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', (e) => {
@@ -823,12 +869,12 @@ function updateClock() {
   const ampm = hours >= 12 ? 'PM' : 'AM';
   
   hours = hours % 12;
-  hours = hours ? hours : 12; // 0 becomes 12
+  hours = hours ? hours : 12;
   
   const timeStr = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} ${ampm}`;
   
-  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   
   const dateStr = `${days[now.getDay()]}, ${months[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
   
@@ -839,8 +885,9 @@ function updateClock() {
 updateClock();
 setInterval(updateClock, 1000);
 
-addMessage('Ay! I\'m Lil Cuh - ultra-intelligent AI. I can code, create images/videos/sounds, solve math, analyze your files, give health advice, share 1000+ recipes, and more. What\'s good?', 'bot');
-showSuggestions(['Generate a galaxy image', 'Build me a calculator', 'Create a drumbeat sound', 'Solve 2x + 5 = 15']);
+// Initial message
+addMessage('👋 Yo! I\'m Lil Cuh - your ENHANCED ultra-intelligent AI!\n\n✨ NEW FEATURES:\n🔍 Automatic code validation\n🌐 Web scraping (type "scrape [url]")\n🎮 Steam guides (type "steam [game]")\n💻 Elite code generation\n\nWhat can I help you with?', 'bot');
+showSuggestions(['Build me a calculator', 'Scrape https://example.com', 'Steam Minecraft', 'Create a Todo app']);
 updateMemory();
 </script>
 </body>
