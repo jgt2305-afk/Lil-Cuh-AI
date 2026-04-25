@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lil Cuh AI</title>
+<link rel="icon" type="image/svg+xml" href='data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="14" fill="%23120419"/><path d="M9 12h28c7 0 12 5 12 12v3H9c-5 0-8-3-8-8s3-7 8-7Z" fill="%2358d8ff"/><path d="M32 22 50 54H14Z" fill="%23a855f7"/></svg>'>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#ff3b9d;
+  --red:#ff1f3d;
+  --bg:#180014;
+  --bg-deep:#0b000f;
+  --panel:#140016;
+  --panel-soft:#260021;
+  --line:rgba(255,59,157,.24);
+  --line-strong:rgba(255,59,157,.45);
+  --text:#fff4fb;
+  --muted:rgba(255,230,245,.68);
+  --success:#66f0a8;
+  --glass:rgba(255,255,255,.035);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;height:100%;font-family:'Inter',sans-serif;}
+body{
+  color:var(--text);
+  background:
+    radial-gradient(circle at top, rgba(255,59,157,.18), transparent 28%),
+    radial-gradient(circle at bottom, rgba(255,31,61,.09), transparent 25%),
+    linear-gradient(180deg, #260015 0%, #140010 55%, #0b000f 100%);
+  overflow:hidden;
+}
+.page{
+  width:min(1500px,96vw);
+  height:min(940px,94vh);
+  margin:3vh auto;
+  display:grid;
+  grid-template-columns:280px minmax(0,1fr) 300px;
+  gap:18px;
+}
+.sidebar,.app,.rail{
+  background:rgba(20,0,22,.94);
+  border:1px solid var(--line);
+  box-shadow:0 0 55px rgba(255,59,157,.18);
+  min-height:0;
+}
+.sidebar,.rail{border-radius:26px;padding:18px;overflow:hidden;}
+.app{border-radius:30px;padding:18px 18px 16px;display:flex;flex-direction:column;min-height:0;}
+.brand-card,.sidebar-card,.rail-card,.chat-shell,.input-shell,.message,.chip,.tab-btn,.side-btn,.session-btn,.tool-btn,.send-btn,.preview-btn,.code-btn{
+  border-radius:18px;
+}
+.sidebar-card,.rail-card,.chat-shell,.input-shell{
+  backdrop-filter:blur(14px);
+}
+.brand-card{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:16px;
+  background:linear-gradient(180deg, rgba(255,59,157,.08), rgba(255,59,157,.03));
+  border:1px solid var(--line-strong);
+  margin-bottom:16px;
+}
+.logo{
+  width:50px;
+  height:50px;
+  flex-shrink:0;
+  position:relative;
+  border-radius:14px;
+  background:#120419;
+  overflow:hidden;
+}
+.logo::before{
+  content:"";
+  position:absolute;
+  left:6px;
+  top:10px;
+  width:30px;
+  height:16px;
+  border-radius:0 12px 8px 12px;
+  background:linear-gradient(90deg,#5fe0ff,#5ac7ff);
+}
+.logo::after{
+  content:"";
+  position:absolute;
+  left:13px;
+  bottom:6px;
+  width:0;
+  height:0;
+  border-left:16px solid transparent;
+  border-right:16px solid transparent;
+  border-bottom:28px solid #a855f7;
+}
+.brand-card h2{font-size:1.7rem;color:var(--pink);display:flex;align-items:center;justify-content:center;gap:8px;}
+.brand-card p{font-size:.88rem;color:var(--muted);line-height:1.4;}
+.status-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;box-shadow:0 0 14px rgba(74,222,128,.75);}
+.sidebar{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  padding-right:12px;
+}
+.sidebar::-webkit-scrollbar{width:8px;}
+.sidebar::-webkit-scrollbar-thumb{
+  background:rgba(255,59,157,.32);
+  border-radius:999px;
+}
+.sidebar-card,.rail-card{
+  padding:14px;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(255,59,157,.05), rgba(255,255,255,.02));
+}
+.sidebar-head,.rail-head,.section-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:10px;
+}
+.sidebar-head h3,.rail-head h3,.section-head h3{font-size:1rem;}
+.small{font-size:.78rem;color:var(--muted);}
+.clock-box{
+  text-align:center;
+  padding:10px 6px 2px;
+}
+#clock{
+  font-size:2.05rem;
+  font-weight:800;
+  color:var(--pink);
+  text-shadow:0 0 22px rgba(255,59,157,.65);
+}
+#date{
+  margin-top:6px;
+  color:rgba(255,59,157,.85);
+  font-weight:600;
+  font-size:.92rem;
+}
+.memory-indicator{
+  text-align:center;
+  font-size:.8rem;
+  color:var(--muted);
+  margin-top:10px;
+}
+.actions,.sessions,.builder-list,.tool-list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.side-btn,.session-btn,.builder-btn,.tool-btn,.tab-btn,.preview-btn,.code-btn{
+  border:1px solid rgba(255,59,157,.18);
+  background:var(--glass);
+  color:var(--text);
+  cursor:pointer;
+  transition:all .18s ease;
+}
+.side-btn,.session-btn,.builder-btn{
+  padding:12px 14px;
+  text-align:left;
+  width:100%;
+  overflow:hidden;
+}
+.side-btn:hover,.session-btn:hover,.builder-btn:hover,.tool-btn:hover,.tab-btn:hover,.preview-btn:hover,.code-btn:hover{
+  border-color:var(--line-strong);
+  background:rgba(255,59,157,.1);
+  transform:translateY(-1px);
+}
+.side-btn strong,.session-btn strong,.builder-btn strong{
+  display:block;
+  font-size:.95rem;
+  white-space:normal;
+  word-break:break-word;
+}
+.side-btn span,.session-btn span,.builder-btn span{
+  display:block;
+  margin-top:5px;
+  font-size:.82rem;
+  color:var(--muted);
+  line-height:1.35;
+  white-space:normal;
+  word-break:break-word;
+}
+.sessions{overflow:auto;max-height:240px;padding-right:4px;}
+.sessions::-webkit-scrollbar,.chat::-webkit-scrollbar,.code-content::-webkit-scrollbar{width:8px;}
+.sessions::-webkit-scrollbar-thumb,.chat::-webkit-scrollbar-thumb,.code-content::-webkit-scrollbar-thumb{
+  background:rgba(255,59,157,.32);
+  border-radius:999px;
+}
+.session-btn.active{background:rgba(255,59,157,.15);border-color:var(--line-strong);}
+.topbar{
+  text-align:center;
+  padding:8px 8px 14px;
+  border-bottom:1px solid rgba(255,59,157,.18);
+}
+.topbar h1{
+  margin:0 0 6px;
+  font-size:2.25rem;
+  color:var(--pink);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+.topbar p{font-size:1rem;color:var(--muted);}
+.tabs-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  margin:16px 0 14px;
+}
+.tabs{display:flex;gap:10px;flex-wrap:wrap;}
+.tab-btn{
+  padding:10px 18px;
+  font-size:1rem;
+}
+.tab-btn.active{
+  background:rgba(255,59,157,.16);
+  border-color:rgba(255,120,170,.45);
+  color:#fff;
+}
+.search-wrap{
+  flex:1;
+  max-width:360px;
+  position:relative;
+}
+.search-wrap input{
+  width:100%;
+  padding:12px 14px 12px 42px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,59,157,.2);
+  border-radius:18px;
+  color:var(--text);
+  outline:none;
+}
+.search-wrap::before{
+  content:"";
+  position:absolute;
+  left:15px;
+  top:50%;
+  width:13px;
+  height:13px;
+  border:2px solid #7ad8ff;
+  border-radius:50%;
+  transform:translateY(-60%);
+}
+.search-wrap::after{
+  content:"";
+  position:absolute;
+  left:28px;
+  top:56%;
+  width:8px;
+  height:2px;
+  background:#7ad8ff;
+  transform:rotate(45deg);
+}
+.main-stack{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  min-height:0;
+  flex:1;
+}
+.tab-panel{display:none;min-height:0;flex:1;}
+.tab-panel.active{display:flex;flex-direction:column;}
+.chat-shell{
+  flex:1;
+  min-height:0;
+  padding:14px;
+  border:1px solid var(--line);
+  background:linear-gradient(180deg, rgba(255,59,157,.035), rgba(255,255,255,.015));
+  display:flex;
+  flex-direction:column;
+}
+.chat-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  padding-bottom:12px;
+  border-bottom:1px solid rgba(255,59,157,.16);
+}
+.chat-header h2{font-size:1.05rem;color:#74d8ff;letter-spacing:.12em;text-transform:uppercase;}
+.chat-title{font-size:2rem;font-weight:800;color:#fff;margin-top:4px;}
+.chat-sub{max-width:370px;text-align:right;color:var(--muted);font-size:.92rem;line-height:1.45;}
+.chat{
+  flex:1;
+  min-height:220px;
+  overflow:auto;
+  padding:14px 4px 8px;
+}
+.chat::-webkit-scrollbar-track,.sessions::-webkit-scrollbar-track,.code-content::-webkit-scrollbar-track{
+  background:rgba(255,255,255,.025);
+  border-radius:999px;
+}
+.message{
+  max-width:82%;
+  margin-bottom:14px;
+  padding:12px 14px;
+  line-height:1.55;
+  font-size:1rem;
+  border:1px solid rgba(255,59,157,.22);
+  word-break:break-word;
+}
+.message.user{
+  margin-left:auto;
+  background:linear-gradient(90deg, rgba(64,22,52,.95), rgba(36,10,28,.95));
+}
+.message.bot{
+  background:rgba(255,59,157,.12);
+  position:relative;
+  padding-left:48px;
+  white-space:pre-wrap;
+}
+.message.bot::before{
+  content:"";
+  position:absolute;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%);
+  width:0;
+  height:0;
+  border-left:12px solid transparent;
+  border-right:12px solid transparent;
+  border-bottom:20px solid #a855f7;
+}
+.message.bot::after{
+  content:"";
+  position:absolute;
+  left:9px;
+  top:calc(50% - 15px);
+  width:24px;
+  height:10px;
+  border-radius:0 0 6px 6px;
+  background:linear-gradient(90deg,#58d8ff,#41b8ff);
+  box-shadow:0 0 12px rgba(88,216,255,.5);
+}
+.message.error{
+  background:rgba(255,31,61,.18);
+  border-color:rgba(255,31,61,.38);
+  color:#ffd1d6;
+}
+.message.thinking{opacity:.68;font-style:italic;}
+.message img,.message video,.message audio{
+  display:block;
+  max-width:100%;
+  border-radius:10px;
+  margin-bottom:8px;
+}
+.message audio{width:100%;}
+.message-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.message-actions button{
+  border:1px solid rgba(255,59,157,.24);
+  background:rgba(0,0,0,.24);
+  color:var(--text);
+  padding:6px 10px;
+  border-radius:10px;
+  cursor:pointer;
+}
+.chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:10px 0 12px;
+}
+.chip{
+  padding:8px 12px;
+  border:1px solid rgba(255,59,157,.24);
+  background:rgba(255,59,157,.05);
+  color:var(--text);
+  font-size:.9rem;
+  cursor:pointer;
+}
+.chip:hover{background:rgba(255,59,157,.12);}
+.input-shell{
+  border:1px solid rgba(255,59,157,.2);
+  background:linear-gradient(180deg, rgba(36,0,30,.92), rgba(20,0,18,.92));
+  padding:12px;
+}
+.file-preview-area{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
+}
+.file-item{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:12px;
+  background:rgba(255,59,157,.12);
+  border:1px solid rgba(255,59,157,.24);
+  font-size:.84rem;
+}
+.file-item img{width:28px;height:28px;object-fit:cover;border-radius:6px;}
+.file-item button{
+  border:none;
+  background:none;
+  color:#ff8798;
+  font-size:1rem;
+  cursor:pointer;
+}
+.input-row{
+  display:flex;
+  gap:10px;
+  align-items:flex-end;
+}
+.input-col{flex:1;}
+textarea{
+  width:100%;
+  min-height:86px;
+  max-height:140px;
+  resize:none;
+  background:#250020;
+  color:var(--text);
+  border:1px solid rgba(255,59,157,.24);
+  border-radius:16px;
+  padding:14px;
+  outline:none;
+}
+.tools{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.tool-btn,.preview-btn,.code-btn{
+  padding:7px 12px;
+  font-size:.84rem;
+}
+.send-btn{
+  padding:14px 22px;
+  min-width:98px;
+  border:none;
+  background:linear-gradient(90deg,var(--pink),var(--red));
+  color:#140012;
+  font-weight:800;
+  font-size:1.05rem;
+  cursor:pointer;
+}
+.send-btn:disabled{opacity:.55;cursor:not-allowed;}
+.rail{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+.builder-list,.tool-list{max-height:220px;overflow:auto;padding-right:4px;}
+.preview-wrap{display:none;}
+.preview-wrap.visible,.code-panel.visible{display:block;}
+.preview-wrap{
+  flex:1;
+  min-height:0;
+}
+iframe{
+  width:100%;
+  height:100%;
+  min-height:300px;
+  border:none;
+  border-radius:16px;
+  background:#fff;
+}
+.code-panel{
+  display:block;
+}
+.code-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:12px;
+}
+.code-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.code-content{
+  min-height:170px;
+  max-height:250px;
+  overflow:auto;
+  padding:12px;
+  border-radius:14px;
+  background:rgba(0,0,0,.22);
+  border:1px solid rgba(255,59,157,.16);
+  font-family:Consolas,monospace;
+  font-size:.84rem;
+  white-space:pre-wrap;
+}
+.search-results{
+  min-height:80px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.search-item{
+  padding:10px 12px;
+  border-radius:12px;
+  border:1px solid rgba(255,59,157,.16);
+  background:rgba(255,255,255,.03);
+  font-size:.88rem;
+}
+.empty-note{font-size:.85rem;color:var(--muted);line-height:1.45;}
+.preference-pills{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+.pref-pill{
+  padding:8px 11px;
+  border-radius:999px;
+  border:1px solid rgba(255,59,157,.2);
+  background:rgba(255,59,157,.08);
+  font-size:.82rem;
+  color:var(--text);
+}
+.admin-status{
+  padding:10px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,59,157,.18);
+  background:rgba(255,255,255,.03);
+  font-size:.84rem;
+  line-height:1.45;
+}
+.admin-status.active{
+  border-color:rgba(102,240,168,.28);
+  background:rgba(102,240,168,.08);
+  color:#dcfff0;
+}
+.admin-input{
+  width:100%;
+  margin-top:10px;
+  padding:11px 12px;
+  border-radius:14px;
+  border:1px solid rgba(255,59,157,.2);
+  background:rgba(0,0,0,.18);
+  color:var(--text);
+  outline:none;
+}
+.admin-tools{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+.admin-btn{
+  padding:8px 12px;
+  border-radius:12px;
+  border:1px solid rgba(255,59,157,.22);
+  background:rgba(255,255,255,.04);
+  color:var(--text);
+  cursor:pointer;
+}
+.admin-btn:hover{
+  background:rgba(255,59,157,.1);
+  border-color:var(--line-strong);
+}
+.admin-feature{
+  padding:11px 12px;
+  border-radius:14px;
+  border:1px solid rgba(102,240,168,.18);
+  background:rgba(102,240,168,.05);
+}
+.admin-feature strong{
+  display:block;
+  margin-bottom:4px;
+}
+@media (max-width:1260px){
+  body{overflow:auto;}
+  .page{
+    grid-template-columns:1fr;
+    height:auto;
+    margin:14px auto;
+  }
+}
+@media (max-width:760px){
+  .page{width:100vw;padding:10px;}
+  .sidebar,.app,.rail{border-radius:22px;}
+  .tabs-row,.chat-header,.input-row{flex-direction:column;align-items:stretch;}
+  .search-wrap{max-width:none;}
+  .chat-sub{text-align:left;max-width:none;}
+  .message{max-width:100%;}
+  .send-btn{width:100%;}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <aside class="sidebar">
+    <div class="brand-card">
+      <div class="logo" aria-hidden="true"></div>
+      <div>
+        <h3 style="font-size:1.5rem;">Lil Cuh AI</h3>
+        <p>Pink-red workspace with saved chats, memory tools, and builders.</p>
+      </div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-head">
+        <h3>Local Time</h3>
+        <span class="small">Live</span>
+      </div>
+      <div class="clock-box">
+        <div id="clock"></div>
+        <div id="date"></div>
+      </div>
+      <div id="memoryIndicator" class="memory-indicator">Memory: 0 projects tracked</div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-head">
+        <h3>Preferences</h3>
+        <span class="small">Saved profile</span>
+      </div>
+      <div class="preference-pills">
+        <div class="pref-pill">Cologne</div>
+        <div class="pref-pill">Fragrances</div>
+        <div class="pref-pill">E-Bikes</div>
+      </div>
+      <div class="small" style="margin-top:10px;">Lil Cuh keeps these interests in mind for recommendations, memory, and builds.</div>
+    </div>
+
+    <div class="sidebar-card" style="min-height:0;display:flex;flex-direction:column;">
+      <div class="sidebar-head">
+        <h3>Sidebar Tools</h3>
+        <span class="small">Requested actions</span>
+      </div>
+      <div class="actions">
+        <button id="saveChatBtn" class="side-btn"><strong>Save</strong><span>Save the current chat to the sidebar list.</span></button>
+        <button id="createMemoryBtn" class="side-btn"><strong>Create Memory File</strong><span>Download a memory snapshot.</span></button>
+        <button id="loadMemoryBtn" class="side-btn"><strong>Load Memory File</strong><span>Restore projects and memory.</span></button>
+        <button id="clearMemBtn" class="side-btn"><strong>Clear Memory</strong><span>Remove saved memory and current history.</span></button>
+        <button id="showMemBtn" class="side-btn"><strong>Show Memory</strong><span>List saved projects in chat.</span></button>
+        <button id="exportBtn" class="side-btn"><strong>Export Code</strong><span>Download the active code output.</span></button>
+        <button id="newProjBtn" class="side-btn"><strong>New Project</strong><span>Start a fresh project.</span></button>
+        <button id="refreshBtn" class="side-btn"><strong>Refresh Page</strong><span>Reload everything.</span></button>
+      </div>
+    </div>
+
+    <div class="sidebar-card" style="min-height:0;display:flex;flex-direction:column;">
+      <div class="sidebar-head">
+        <h3>Chats</h3>
+        <span id="sessionCount" class="small">0 saved</span>
+      </div>
+      <div id="chatList" class="sessions"></div>
+    </div>
+
+    <div class="sidebar-card">
+      <div class="sidebar-head">
+        <h3>Admin Access</h3>
+        <span class="small">Special features</span>
+      </div>
+      <div id="adminStatus" class="admin-status">Admin tools are locked. Enter your code to unlock premium workspace controls.</div>
+      <input id="adminCodeInput" class="admin-input" type="password" placeholder="Enter admin code">
+      <div class="admin-tools">
+        <button id="unlockAdminBtn" class="admin-btn">Unlock</button>
+        <button id="lockAdminBtn" class="admin-btn">Lock</button>
+      </div>
+      <div id="adminFeatures" style="display:none;margin-top:12px;">
+        <div class="admin-feature">
+          <strong>Preference Lab</strong>
+          Generates builds and suggestions tuned for fragrances, cologne, and e-bike interests.
+        </div>
+        <div class="admin-feature" style="margin-top:10px;">
+          <strong>Admin Prompt Boost</strong>
+          Adds extra detail for premium dashboard, recommendation, and comparison requests.
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="app">
+    <div class="topbar">
+      <h1><span class="status-dot"></span> Lil Cuh AI</h1>
+      <p>Ultra-intelligent: Coding + Health + Master Chef + Vision AI + Media Creator</p>
+      <div class="clock-box" style="padding:10px 0 0;">
+        <div id="heroClock"></div>
+        <div id="heroDate"></div>
+      </div>
+    </div>
+
+    <div class="tabs-row">
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="chatTab">Chat</button>
+        <button class="tab-btn" data-tab="builderTab">Builder</button>
+        <button class="tab-btn" data-tab="previewTab">Preview</button>
+      </div>
+      <label class="search-wrap">
+        <input id="workspaceSearch" type="search" placeholder="Search chats, tools, builders, or prompts">
+      </label>
+    </div>
+
+    <div class="main-stack">
+      <section class="tab-panel active" id="chatTab">
+        <div class="chat-shell">
+          <div class="chat-header">
+            <div>
+              <h2>Conversation</h2>
+              <div id="activeChatTitle" class="chat-title">New Chat</div>
+            </div>
+            <div class="chat-sub">Keep the original Lil Cuh feel, but with chats, tabs, a sidebar, search, time, and builder shortcuts.</div>
+          </div>
+
+          <div id="chat" class="chat"></div>
+
+          <div id="suggestions" class="chips"></div>
+
+          <div class="input-shell">
+            <div id="filePreviewArea" class="file-preview-area"></div>
+            <div class="input-row">
+              <div class="input-col">
+                <textarea id="input" placeholder="Ask me to create images, videos, sounds, code, solve math, or upload files to analyze..."></textarea>
+                <div class="tools">
+                  <button id="attachBtn" class="tool-btn">Attach File</button>
+                  <button id="genImageBtn" class="tool-btn">Image</button>
+                  <button id="genVideoBtn" class="tool-btn">Video</button>
+                  <button id="genSoundBtn" class="tool-btn">Sound</button>
+                  <button id="saveDraftBtn" class="tool-btn">Save Chat</button>
+                </div>
+              </div>
+              <button id="sendBtn" class="send-btn">Send</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="builderTab">
+        <div class="chat-shell">
+          <div class="chat-header">
+            <div>
+              <h2>Builder</h2>
+              <div class="chat-title" style="font-size:1.7rem;">Build With What You Need</div>
+            </div>
+            <div class="chat-sub">Scratch means building with Scratch here, not starting from zero.</div>
+          </div>
+          <div class="builder-list" id="builderPanelList" style="max-height:none;">
+            <button class="builder-btn" data-builder="scratch"><strong>Scratch</strong><span>Build a Scratch-style project, game, or kid-friendly coding idea using Scratch concepts and block-style logic.</span></button>
+            <button class="builder-btn" data-builder="github"><strong>GitHub</strong><span>Build repo pages, code dashboards, README-style layouts, and GitHub-inspired tools.</span></button>
+            <button class="builder-btn" data-builder="gitlab"><strong>GitLab</strong><span>Build GitLab-style dashboards, CI views, merge request pages, and internal tools.</span></button>
+          </div>
+        </div>
+      </section>
+
+      <section class="tab-panel" id="previewTab">
+        <div class="chat-shell">
+          <div class="chat-header">
+            <div>
+              <h2>Preview</h2>
+              <div class="chat-title" style="font-size:1.7rem;">Current Project</div>
+            </div>
+            <div class="code-actions">
+              <button id="refreshPreviewBtn" class="preview-btn">Refresh Preview</button>
+              <button id="closePreviewBtn" class="preview-btn">Close Preview</button>
+            </div>
+          </div>
+          <div id="previewContainer" class="preview-wrap">
+            <iframe id="preview" sandbox="allow-scripts allow-same-origin"></iframe>
+          </div>
+          <div id="previewEmpty" class="empty-note">No preview yet. Generate or load a project and it will show here.</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <aside class="rail">
+    <div class="rail-card">
+      <div class="rail-head">
+        <h3>Search Results</h3>
+        <span class="small">Live filter</span>
+      </div>
+      <div id="searchResults" class="search-results">
+        <div class="empty-note">Search will filter chats, sidebar tools, and builder cards.</div>
+      </div>
+    </div>
+
+    <div class="rail-card">
+      <div class="rail-head">
+        <h3>Builder Shortcuts</h3>
+        <span class="small">Quick prompts</span>
+      </div>
+      <div class="builder-list">
+        <button class="builder-btn builder-shortcut" data-prompt="Build me a Scratch-style coding game with colorful block-inspired UI, instructions, and beginner-friendly interactions."><strong>Scratch</strong><span>Use Scratch-style logic and presentation.</span></button>
+        <button class="builder-btn builder-shortcut" data-prompt="Build me a GitHub-style project dashboard with repo stats, README blocks, issues, and recent commits."><strong>GitHub</strong><span>Use a GitHub-inspired layout.</span></button>
+        <button class="builder-btn builder-shortcut" data-prompt="Build me a GitLab-style dashboard with CI pipeline cards, merge request summaries, and release tracking."><strong>GitLab</strong><span>Use a GitLab-inspired layout.</span></button>
+      </div>
+    </div>
+
+    <div class="rail-card code-panel visible" id="codePanel">
+      <div class="code-head">
+        <div>
+          <h3>Code Panel</h3>
+          <div class="small">Current output</div>
+        </div>
+        <div class="code-actions">
+          <button id="copyCodeBtn" class="code-btn">Copy</button>
+          <button id="closeCodeBtn" class="code-btn">Clear</button>
+        </div>
+      </div>
+      <div id="codeContent" class="code-content">No project generated yet.</div>
+    </div>
+  </aside>
+</div>
+
+<input type="file" id="fileInput" multiple accept="image/*,video/*,audio/*,.pdf,.txt,.html,.css,.js,.json,.md,.doc,.docx">
+
+<script>
+let conversationHistory = [];
+let projectMemory = [];
+let currentProject = null;
+let isProcessing = false;
+let attachedFiles = [];
+let chatSessions = [];
+let activeSessionId = null;
+let isAdminUnlocked = false;
+const ADMIN_CODE = 'LILCUH-ADMIN';
+let userMemory = {
+  name: '',
+  preferences: {
+    interests: ['cologne', 'fragrances', 'e-bikes']
+  },
+  conversationSummaries: [],
+  importantFacts: [],
+  projects: [],
+  created: new Date().toISOString(),
+  lastUpdated: new Date().toISOString()
+};
+
+const chat = document.getElementById('chat');
+const input = document.getElementById('input');
+const sendBtn = document.getElementById('sendBtn');
+const suggestions = document.getElementById('suggestions');
+const memoryIndicator = document.getElementById('memoryIndicator');
+const codePanel = document.getElementById('codePanel');
+const codeContent = document.getElementById('codeContent');
+const previewContainer = document.getElementById('previewContainer');
+const preview = document.getElementById('preview');
+const previewEmpty = document.getElementById('previewEmpty');
+const fileInput = document.getElementById('fileInput');
+const filePreviewArea = document.getElementById('filePreviewArea');
+const chatList = document.getElementById('chatList');
+const sessionCount = document.getElementById('sessionCount');
+const activeChatTitle = document.getElementById('activeChatTitle');
+const searchResults = document.getElementById('searchResults');
+const workspaceSearch = document.getElementById('workspaceSearch');
+const adminStatus = document.getElementById('adminStatus');
+const adminFeatures = document.getElementById('adminFeatures');
+const adminCodeInput = document.getElementById('adminCodeInput');
+
+const defaultSuggestions = [
+  'Generate a galaxy image',
+  'Build me a calculator',
+  'Create a drumbeat sound',
+  'Solve 2x + 5 = 15'
+];
+
+function escapeHtml(text) {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function makeSessionTitle(seedText) {
+  const clean = (seedText || '').replace(/\s+/g, ' ').trim();
+  return clean ? clean.slice(0, 34) : 'New Chat';
+}
+
+function getActiveSession() {
+  return chatSessions.find(session => session.id === activeSessionId) || null;
+}
+
+function createChatSession(title = 'New Chat') {
+  const session = {
+    id: Date.now() + Math.random(),
+    title,
+    history: [],
+    project: null,
+    markup: '',
+    updatedAt: new Date().toISOString()
+  };
+  chatSessions.unshift(session);
+  activeSessionId = session.id;
+  renderChatSessions();
+  return session;
+}
+
+function syncCurrentSession() {
+  const session = getActiveSession();
+  if (!session) return;
+  session.history = [...conversationHistory];
+  session.project = currentProject ? { ...currentProject } : null;
+  session.markup = chat.innerHTML;
+  session.updatedAt = new Date().toISOString();
+  renderChatSessions(workspaceSearch.value.trim().toLowerCase());
+}
+
+function renderChatSessions(filter = '') {
+  chatList.innerHTML = '';
+  const shown = chatSessions.filter(session => {
+    if (!filter) return true;
+    return session.title.toLowerCase().includes(filter) || (session.project && session.project.name.toLowerCase().includes(filter));
+  });
+
+  if (!shown.length) {
+    chatList.innerHTML = '<div class="empty-note">No saved chats matched that search.</div>';
+  } else {
+    shown.forEach(session => {
+      const btn = document.createElement('button');
+      btn.className = 'session-btn' + (session.id === activeSessionId ? ' active' : '');
+      btn.innerHTML = `<strong>${escapeHtml(session.title)}</strong><span>${session.project ? escapeHtml(session.project.name) : 'Conversation only'}</span>`;
+      btn.onclick = () => switchSession(session.id);
+      chatList.appendChild(btn);
+    });
+  }
+
+  sessionCount.textContent = `${chatSessions.length} saved`;
+  const active = getActiveSession();
+  activeChatTitle.textContent = active ? active.title : 'New Chat';
+}
+
+function switchSession(id) {
+  syncCurrentSession();
+  const session = chatSessions.find(item => item.id === id);
+  if (!session) return;
+  activeSessionId = id;
+  conversationHistory = [...session.history];
+  currentProject = session.project ? { ...session.project } : null;
+  chat.innerHTML = session.markup || '';
+
+  if (currentProject && currentProject.code) {
+    runPreview(currentProject.code);
+  } else {
+    closePreview();
+    codeContent.textContent = 'No project generated yet.';
+  }
+  renderChatSessions(workspaceSearch.value.trim().toLowerCase());
+}
+
+function addMessage(text, type, actions, mediaUrl, mediaType) {
+  const div = document.createElement('div');
+  div.className = `message ${type}`;
+
+  if (mediaUrl && mediaType) {
+    if (mediaType === 'image') {
+      const img = document.createElement('img');
+      img.src = mediaUrl;
+      img.alt = 'Generated media';
+      div.appendChild(img);
+    } else if (mediaType === 'video') {
+      const video = document.createElement('video');
+      video.src = mediaUrl;
+      video.controls = true;
+      div.appendChild(video);
+    } else if (mediaType === 'audio') {
+      const audio = document.createElement('audio');
+      audio.src = mediaUrl;
+      audio.controls = true;
+      div.appendChild(audio);
+    }
+
+    if (text) {
+      const textDiv = document.createElement('div');
+      textDiv.textContent = text;
+      div.appendChild(textDiv);
+    }
+  } else {
+    div.textContent = text;
+  }
+
+  if (actions && actions.length) {
+    const actionsDiv = document.createElement('div');
+    actionsDiv.className = 'message-actions';
+    actions.forEach(action => {
+      const btn = document.createElement('button');
+      btn.textContent = action.label;
+      btn.onclick = action.handler;
+      actionsDiv.appendChild(btn);
+    });
+    div.appendChild(actionsDiv);
+  }
+
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+  syncCurrentSession();
+  return div;
+}
+
+function showThinking() {
+  return addMessage('Thinking...', 'bot thinking');
+}
+
+function removeMessage(el) {
+  if (el && el.parentNode) {
+    el.parentNode.removeChild(el);
+    syncCurrentSession();
+  }
+}
+
+function showSuggestions(items) {
+  suggestions.innerHTML = '';
+  items.forEach(item => {
+    const chip = document.createElement('button');
+    chip.className = 'chip';
+    chip.textContent = item;
+    chip.onclick = () => {
+      input.value = item;
+      send();
+    };
+    suggestions.appendChild(chip);
+  });
+}
+
+function updateMemory() {
+  memoryIndicator.textContent = `Memory: ${projectMemory.length} projects tracked`;
+}
+
+function extractProjectName(msg) {
+  const match = msg.match(/(?:make|build|create|design|generate)\s+(?:a|an|me)?\s*(.+?)(?:\s+for|\s+with|\s+that|$)/i);
+  return match && match[1] ? match[1].trim().substring(0, 30) : null;
+}
+
+function saveProject(name, code, desc) {
+  const project = { id: Date.now(), name, code, description: desc, created: new Date().toISOString() };
+  currentProject = project;
+  const idx = projectMemory.findIndex(item => item.name === name);
+  if (idx >= 0) projectMemory[idx] = project;
+  else projectMemory.unshift(project);
+  if (projectMemory.length > 12) projectMemory.pop();
+
+  const session = getActiveSession();
+  if (session) {
+    session.project = { ...project };
+    if (session.title === 'New Chat') session.title = makeSessionTitle(name);
+  }
+  updateMemory();
+  syncCurrentSession();
+}
+
+function buildContext() {
+  let ctx = '';
+  if (currentProject) ctx += `\n\nCURRENT PROJECT: ${currentProject.name}\n${currentProject.description}`;
+  if (projectMemory.length) ctx += `\n\nPREVIOUS PROJECTS: ${projectMemory.map(project => project.name).join(', ')}`;
+  if (userMemory.name) ctx += `\n\nUSER NAME: ${userMemory.name}`;
+  if (Object.keys(userMemory.preferences).length > 0) ctx += `\n\nUSER PREFERENCES: ${JSON.stringify(userMemory.preferences)}`;
+  if (userMemory.importantFacts.length > 0) ctx += `\n\nIMPORTANT FACTS ABOUT USER: ${userMemory.importantFacts.join(', ')}`;
+  if (userMemory.conversationSummaries.length > 0) ctx += `\n\nPAST CONVERSATION SUMMARIES: ${userMemory.conversationSummaries.slice(-3).join(' | ')}`;
+  if (isAdminUnlocked) ctx += `\n\nADMIN MODE: unlocked. Provide premium detail and include tailored ideas connected to cologne, fragrances, and e-bikes when relevant.`;
+  return ctx;
+}
+
+function updateAdminUI() {
+  if (isAdminUnlocked) {
+    adminStatus.textContent = 'Admin tools unlocked. Premium tailoring is active for fragrances, cologne, e-bikes, and advanced workspace flows.';
+    adminStatus.classList.add('active');
+    adminFeatures.style.display = 'block';
+  } else {
+    adminStatus.textContent = 'Admin tools are locked. Enter your code to unlock premium workspace controls.';
+    adminStatus.classList.remove('active');
+    adminFeatures.style.display = 'none';
+  }
+}
+
+function unlockAdmin() {
+  const code = adminCodeInput.value.trim();
+  if (code === ADMIN_CODE) {
+    isAdminUnlocked = true;
+    updateAdminUI();
+    addMessage('Admin mode unlocked. Special features and preference-aware prompt boosts are now active.', 'bot');
+    adminCodeInput.value = '';
+  } else {
+    addMessage('That admin code is not valid.', 'error');
+  }
+}
+
+function lockAdmin() {
+  isAdminUnlocked = false;
+  updateAdminUI();
+  adminCodeInput.value = '';
+  addMessage('Admin mode locked.', 'bot');
+}
+
+function runPreview(code) {
+  preview.srcdoc = code;
+  previewContainer.classList.add('visible');
+  previewEmpty.style.display = 'none';
+  codeContent.textContent = code;
+  syncCurrentSession();
+}
+
+function closePreview() {
+  preview.srcdoc = '';
+  previewContainer.classList.remove('visible');
+  previewEmpty.style.display = 'block';
+}
+
+function closeCode() {
+  codeContent.textContent = 'No project generated yet.';
+}
+
+function refreshPreview() {
+  if (currentProject && currentProject.code) {
+    preview.srcdoc = '';
+    setTimeout(() => {
+      preview.srcdoc = currentProject.code;
+    }, 120);
+  }
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(',')[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleFiles(files) {
+  for (const file of files) {
+    try {
+      const fileData = { name: file.name, type: file.type, size: file.size };
+      if (file.type.startsWith('image/') || file.type.startsWith('video/') || file.type.startsWith('audio/')) {
+        fileData.base64 = await fileToBase64(file);
+        fileData.preview = URL.createObjectURL(file);
+      } else {
+        fileData.text = await file.text();
+      }
+      attachedFiles.push(fileData);
+      displayFilePreview(fileData);
+    } catch (error) {
+      addMessage(`Error loading ${file.name}`, 'error');
+    }
+  }
+}
+
+function displayFilePreview(fileData) {
+  const item = document.createElement('div');
+  item.className = 'file-item';
+
+  if (fileData.preview && fileData.type.startsWith('image/')) {
+    const img = document.createElement('img');
+    img.src = fileData.preview;
+    item.appendChild(img);
+  }
+
+  const name = document.createElement('span');
+  name.textContent = fileData.name;
+  item.appendChild(name);
+
+  const btn = document.createElement('button');
+  btn.textContent = '×';
+  btn.onclick = () => {
+    attachedFiles = attachedFiles.filter(file => file.name !== fileData.name);
+    filePreviewArea.innerHTML = '';
+    attachedFiles.forEach(displayFilePreview);
+  };
+  item.appendChild(btn);
+  filePreviewArea.appendChild(item);
+}
+
+async function generateMedia(type) {
+  const prompt = input.value.trim() || `a cool ${type}`;
+  input.value = '';
+  addMessage(`Generating ${type}: "${prompt}"...`, 'bot');
+  const thinking = showThinking();
+
+  try {
+    let systemPrompt = '';
+    if (type === 'image') {
+      systemPrompt = `Create an SVG image of: ${prompt}. Respond with ONLY the SVG code, no explanations.`;
+    } else if (type === 'video') {
+      systemPrompt = `Create an HTML5 video animation of: ${prompt}. Use Canvas API or CSS animations. Respond with ONLY complete HTML code including autoplay video/animation.`;
+    } else {
+      systemPrompt = `Create an HTML audio synthesizer that generates sound for: ${prompt}. Use Web Audio API. Respond with ONLY complete HTML code with a play button.`;
+    }
+
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        messages: [{ role: 'user', content: systemPrompt }],
+        max_tokens: 3000
+      })
+    });
+
+    const data = await response.json();
+    removeMessage(thinking);
+
+    if (data.content && data.content[0]) {
+      const reply = data.content[0].text;
+      if (type === 'image') {
+        const svg = reply.replace(/```svg\n?/g, '').replace(/```\n?/g, '').trim();
+        const blob = new Blob([svg], { type: 'image/svg+xml' });
+        const url = URL.createObjectURL(blob);
+        addMessage(`Here's your ${type}!`, 'bot', [
+          {
+            label: 'Download',
+            handler: () => {
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `${prompt.substring(0, 20)}.svg`;
+              a.click();
+            }
+          }
+        ], url, 'image');
+      } else {
+        let code = reply.replace(/```html\n?/gi, '').replace(/```\n?/g, '');
+        const match = code.match(/(<!DOCTYPE[\s\S]*<\/html>)/i) || code.match(/(<html[\s\S]*<\/html>)/i);
+        if (match) code = match[1];
+        const blob = new Blob([code.trim()], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        addMessage(`Here's your ${type}!`, 'bot', [
+          { label: 'Open in New Tab', handler: () => window.open(url, '_blank') },
+          { label: 'Preview', handler: () => { runPreview(code.trim()); setActiveTab('previewTab'); } }
+        ]);
+      }
+    }
+  } catch (error) {
+    removeMessage(thinking);
+    addMessage(`${type} generation failed. Try again?`, 'error');
+  }
+}
+
+async function send() {
+  const text = input.value.trim();
+  if (!text && attachedFiles.length === 0) return;
+  if (isProcessing) return;
+
+  if (!getActiveSession()) createChatSession(makeSessionTitle(text));
+
+  isProcessing = true;
+  input.disabled = true;
+  sendBtn.disabled = true;
+
+  if (text) addMessage(text, 'user');
+  if (attachedFiles.length) attachedFiles.forEach(file => addMessage(`Attached: ${file.name}`, 'user'));
+
+  input.value = '';
+  const thinking = showThinking();
+
+  try {
+    let userMessage = text || 'Analyze the attached files';
+    const messageContent = [];
+
+    for (const file of attachedFiles) {
+      if (file.base64 && file.type.startsWith('image/')) {
+        messageContent.push({
+          type: 'image',
+          source: { type: 'base64', media_type: file.type, data: file.base64 }
+        });
+      } else if (file.text) {
+        userMessage += `\n\nFile "${file.name}":\n${file.text}`;
+      }
+    }
+
+    messageContent.push({ type: 'text', text: userMessage });
+    conversationHistory.push({ role: 'user', content: messageContent });
+    syncCurrentSession();
+
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system: `You are Lil Cuh, ultra-intelligent AI expert in coding, health, fitness, medical diagnosis, culinary arts, mathematics, and media creation.
+
+CRITICAL HTML BUILDING RULES:
+1. For build requests, respond with ONLY complete HTML first.
+2. After the HTML, on a new line, add "---EXPLANATION---" and explain what you built.
+3. If the user asks for Scratch, treat that as Scratch-style building and Scratch-inspired interactions, not "build from scratch."
+4. If the user asks for GitHub or GitLab, style the result accordingly.
+5. Make the HTML fully working and responsive.
+6. The user's standing interests include cologne, fragrances, and e-bikes. Use those preferences whenever recommendations or themed features would help.
+7. If admin mode is unlocked, provide premium-level detail and richer feature ideas.
+8. For files, analyze them directly.${buildContext()}`,
+        messages: conversationHistory,
+        max_tokens: 4096
+      })
+    });
+
+    if (!response.ok) throw new Error(`API error ${response.status}`);
+
+    const data = await response.json();
+    removeMessage(thinking);
+
+    if (data.content && data.content[0]) {
+      const reply = data.content[0].text;
+      conversationHistory.push({ role: 'assistant', content: reply });
+
+      let codePart = reply;
+      let explanation = '';
+      if (reply.includes('---EXPLANATION---')) {
+        const parts = reply.split('---EXPLANATION---');
+        codePart = parts[0].trim();
+        explanation = parts[1] ? parts[1].trim() : '';
+      }
+
+      const isCode = codePart.trim().startsWith('<!DOCTYPE') || codePart.trim().startsWith('<html') || codePart.includes('```html');
+
+      if (isCode) {
+        let code = codePart.replace(/```html\n?/gi, '').replace(/```\n?/g, '');
+        const match = code.match(/(<!DOCTYPE[\s\S]*<\/html>)/i) || code.match(/(<html[\s\S]*<\/html>)/i);
+        if (match) code = match[1];
+        const name = extractProjectName(userMessage) || `Project_${Date.now()}`;
+        saveProject(name, code.trim(), userMessage);
+        if (explanation) addMessage(explanation, 'bot');
+        addMessage('Here you go!', 'bot', [
+          { label: 'Modify', handler: () => { input.value = 'modify this: '; input.focus(); } },
+          { label: 'Save', handler: saveCurrentChat }
+        ]);
+        runPreview(code.trim());
+        setActiveTab('previewTab');
+      } else {
+        addMessage(reply, 'bot');
+      }
+      syncCurrentSession();
+    }
+
+    attachedFiles = [];
+    filePreviewArea.innerHTML = '';
+  } catch (error) {
+    removeMessage(thinking);
+    addMessage(`Error: ${error.message}`, 'error');
+  } finally {
+    isProcessing = false;
+    input.disabled = false;
+    sendBtn.disabled = false;
+    input.focus();
+  }
+}
+
+function saveCurrentChat() {
+  const session = getActiveSession() || createChatSession();
+  session.title = makeSessionTitle(input.value || (currentProject && currentProject.name) || session.title);
+  syncCurrentSession();
+  addMessage(`Saved chat as "${session.title}".`, 'bot');
+}
+
+function exportCode() {
+  if (!currentProject) {
+    addMessage('No code to export!', 'error');
+    return;
+  }
+  const blob = new Blob([currentProject.code], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `${currentProject.name.replace(/\s+/g, '_')}.html`;
+  a.click();
+  URL.revokeObjectURL(url);
+  addMessage('Exported!', 'bot');
+}
+
+function clearMemory() {
+  if (confirm('Clear all memory?')) {
+    projectMemory = [];
+    currentProject = null;
+    conversationHistory = [];
+    chatSessions = [];
+    activeSessionId = null;
+    attachedFiles = [];
+    filePreviewArea.innerHTML = '';
+    chat.innerHTML = '';
+    codeContent.textContent = 'No project generated yet.';
+    closePreview();
+    updateMemory();
+    createChatSession();
+    addMessage('Memory cleared!', 'bot');
+  }
+}
+
+function showMemory() {
+  if (!projectMemory.length) {
+    addMessage('No projects yet!', 'bot');
+    return;
+  }
+  const msg = 'Your projects:\n\n' + projectMemory.map((project, index) => `${index + 1}. ${project.name}`).join('\n');
+  const actions = projectMemory.slice(0, 3).map(project => ({
+    label: project.name.substring(0, 18),
+    handler: () => {
+      currentProject = project;
+      runPreview(project.code);
+      addMessage(`Loaded "${project.name}"`, 'bot');
+      setActiveTab('previewTab');
+    }
+  }));
+  addMessage(msg, 'bot', actions);
+}
+
+function newProject() {
+  currentProject = null;
+  conversationHistory = [];
+  attachedFiles = [];
+  filePreviewArea.innerHTML = '';
+  chat.innerHTML = '';
+  codeContent.textContent = 'No project generated yet.';
+  closePreview();
+  createChatSession();
+  showSuggestions(defaultSuggestions);
+  setActiveTab('chatTab');
+  addMessage('New project!', 'bot');
+}
+
+function copyCode() {
+  navigator.clipboard.writeText(codeContent.textContent).then(() => {
+    const btn = document.getElementById('copyCodeBtn');
+    const original = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => { btn.textContent = original; }, 1800);
+  });
+}
+
+function refreshPage() {
+  location.reload();
+}
+
+async function createMemoryFile() {
+  addMessage('Creating your memory file...', 'bot');
+  const thinking = showThinking();
+
+  try {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system: `You are analyzing a conversation to create a memory file. Extract the user's name, preferences, important facts, and a short summary. Respond only as JSON with keys name, preferences, importantFacts, conversationSummary.`,
+        messages: conversationHistory.slice(-10),
+        max_tokens: 1000
+      })
+    });
+
+    const data = await response.json();
+    removeMessage(thinking);
+
+    if (data.content && data.content[0]) {
+      const reply = data.content[0].text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      try {
+        const extracted = JSON.parse(reply);
+        if (extracted.name) userMemory.name = extracted.name;
+        if (extracted.preferences) userMemory.preferences = { ...userMemory.preferences, ...extracted.preferences };
+        if (Array.isArray(extracted.importantFacts)) userMemory.importantFacts.push(...extracted.importantFacts);
+        if (extracted.conversationSummary) userMemory.conversationSummaries.push(extracted.conversationSummary);
+      } catch (error) {
+        // Keep fallback flow below.
+      }
+
+      userMemory.projects = projectMemory;
+      userMemory.lastUpdated = new Date().toISOString();
+
+      const memoryData = JSON.stringify(userMemory, null, 2);
+      const blob = new Blob([memoryData], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `lilcuh_memory_${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      addMessage('Memory file created!', 'bot');
+    }
+  } catch (error) {
+    removeMessage(thinking);
+    addMessage('Failed to create memory file. Try again?', 'error');
+  }
+}
+
+function loadMemoryFile() {
+  const picker = document.createElement('input');
+  picker.type = 'file';
+  picker.accept = '.json';
+  picker.onchange = async event => {
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      const loadedMemory = JSON.parse(text);
+      if (loadedMemory.created && loadedMemory.lastUpdated) {
+        userMemory = loadedMemory;
+        if (Array.isArray(loadedMemory.projects)) projectMemory = loadedMemory.projects;
+        updateMemory();
+        addMessage(`Memory restored! Loaded ${projectMemory.length} projects.`, 'bot');
+      } else {
+        addMessage('Invalid memory file format.', 'error');
+      }
+    } catch (error) {
+      addMessage('Failed to load memory file. Make sure it is a valid Lil Cuh memory file.', 'error');
+    }
+  };
+  picker.click();
+}
+
+function setActiveTab(tabId) {
+  document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.toggle('active', panel.id === tabId));
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+}
+
+function populateSearchResults(term) {
+  if (!term) {
+    searchResults.innerHTML = '<div class="empty-note">Search will filter chats, sidebar tools, and builder cards.</div>';
+    return;
+  }
+
+  const results = [];
+  chatSessions.forEach(session => {
+    if (session.title.toLowerCase().includes(term)) results.push(`Chat: ${session.title}`);
+  });
+  document.querySelectorAll('.side-btn strong, .builder-btn strong').forEach(node => {
+    if (node.textContent.toLowerCase().includes(term)) results.push(node.textContent);
+  });
+
+  if (!results.length) {
+    searchResults.innerHTML = `<div class="empty-note">No results for "${escapeHtml(term)}".</div>`;
+    return;
+  }
+
+  searchResults.innerHTML = results.slice(0, 8).map(item => `<div class="search-item">${escapeHtml(item)}</div>`).join('');
+}
+
+function updateClock() {
+  const now = new Date();
+  let hours = now.getHours();
+  const minutes = now.getMinutes();
+  const seconds = now.getSeconds();
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12 || 12;
+  const timeText = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')} ${ampm}`;
+  const dateText = now.toLocaleDateString(undefined, {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  });
+  document.getElementById('clock').textContent = timeText;
+  document.getElementById('date').textContent = dateText;
+  document.getElementById('heroClock').textContent = timeText;
+  document.getElementById('heroClock').style.fontSize = '2.1rem';
+  document.getElementById('heroClock').style.fontWeight = '800';
+  document.getElementById('heroClock').style.color = 'var(--pink)';
+  document.getElementById('heroClock').style.textShadow = '0 0 22px rgba(255,59,157,.65)';
+  document.getElementById('heroDate').textContent = dateText;
+  document.getElementById('heroDate').style.color = 'rgba(255,59,157,.88)';
+  document.getElementById('heroDate').style.fontWeight = '700';
+}
+
+function useBuilder(builder) {
+  const prompts = {
+    scratch: 'Build me a Scratch-style project with colorful block-inspired visuals, simple logic, playful interactions, and beginner-friendly instructions.',
+    github: 'Build me a GitHub-style project page with repo stats, README sections, issues, commit activity, and contributor cards.',
+    gitlab: 'Build me a GitLab-style dashboard with CI pipeline status, merge request summaries, release sections, and deployment controls.'
+  };
+  input.value = prompts[builder] || prompts.scratch;
+  setActiveTab('chatTab');
+  input.focus();
+}
+
+sendBtn.addEventListener('click', send);
+input.addEventListener('keydown', event => {
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault();
+    send();
+  }
+});
+
+document.getElementById('saveChatBtn').addEventListener('click', saveCurrentChat);
+document.getElementById('saveDraftBtn').addEventListener('click', saveCurrentChat);
+document.getElementById('createMemoryBtn').addEventListener('click', createMemoryFile);
+document.getElementById('loadMemoryBtn').addEventListener('click', loadMemoryFile);
+document.getElementById('clearMemBtn').addEventListener('click', clearMemory);
+document.getElementById('showMemBtn').addEventListener('click', showMemory);
+document.getElementById('exportBtn').addEventListener('click', exportCode);
+document.getElementById('newProjBtn').addEventListener('click', newProject);
+document.getElementById('refreshBtn').addEventListener('click', refreshPage);
+document.getElementById('copyCodeBtn').addEventListener('click', copyCode);
+document.getElementById('closeCodeBtn').addEventListener('click', closeCode);
+document.getElementById('refreshPreviewBtn').addEventListener('click', refreshPreview);
+document.getElementById('closePreviewBtn').addEventListener('click', closePreview);
+document.getElementById('attachBtn').addEventListener('click', () => fileInput.click());
+document.getElementById('unlockAdminBtn').addEventListener('click', unlockAdmin);
+document.getElementById('lockAdminBtn').addEventListener('click', lockAdmin);
+
+adminCodeInput.addEventListener('keydown', event => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    unlockAdmin();
+  }
+});
+
+fileInput.addEventListener('change', event => {
+  if (event.target.files.length) {
+    handleFiles(event.target.files);
+    event.target.value = '';
+  }
+});
+
+document.getElementById('genImageBtn').addEventListener('click', () => generateMedia('image'));
+document.getElementById('genVideoBtn').addEventListener('click', () => generateMedia('video'));
+document.getElementById('genSoundBtn').addEventListener('click', () => generateMedia('sound'));
+
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => setActiveTab(btn.dataset.tab));
+});
+
+document.querySelectorAll('.builder-btn[data-builder]').forEach(btn => {
+  btn.addEventListener('click', () => useBuilder(btn.dataset.builder));
+});
+
+document.querySelectorAll('.builder-shortcut').forEach(btn => {
+  btn.addEventListener('click', () => {
+    input.value = btn.dataset.prompt;
+    setActiveTab('chatTab');
+    input.focus();
+  });
+});
+
+workspaceSearch.addEventListener('input', event => {
+  const term = event.target.value.trim().toLowerCase();
+  renderChatSessions(term);
+  populateSearchResults(term);
+});
+
+createChatSession();
+updateClock();
+setInterval(updateClock, 1000);
+showSuggestions(defaultSuggestions);
+updateMemory();
+updateAdminUI();
+addMessage('Ay! I pulled the UI back toward the original pink-red Lil Cuh look and kept the new sidebar, chats, tabs, builders, search, and time together.', 'bot');
+</script>
+</body>
+</html>
